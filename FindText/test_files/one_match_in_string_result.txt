@@ -1,0 +1,1 @@
+lineIndex: 1; Line: Здесь был большой cat.; foundPos: 33;

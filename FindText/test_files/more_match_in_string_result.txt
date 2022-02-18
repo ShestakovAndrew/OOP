@@ -1,0 +1,2 @@
+lineIndex: 1; Line: Здесь тоже был cat, то пришёл ещё один жирный cat и их стало два.; foundPos: 16;
+lineIndex: 1; Line: Здесь тоже был cat, то пришёл ещё один жирный cat и их стало два.; foundPos: 27;
