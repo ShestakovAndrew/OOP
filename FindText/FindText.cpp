@@ -4,9 +4,9 @@
 #include <fstream>
 #include <Windows.h>
 
-using FindStringCallback = std::function<void(size_t lineIndex, const std::string& line, size_t foundPos)>;
+using FindStringCallback = std::function<void(size_t lineIndex, std::string const& line, size_t foundPos)>;
 
-std::ifstream GetStreamFromFile(const char* filePath)
+std::ifstream GetStreamFromFile(std::string const& filePath)
 {
 	std::ifstream file(filePath);
 	if (!file.is_open())
@@ -17,20 +17,22 @@ std::ifstream GetStreamFromFile(const char* filePath)
 }
 
 bool FindStringInFile(
-	const char* file,
-	const std::string& needle,
-	const FindStringCallback& callback = FindStringCallback())
+	std::string const& filePath,
+	std::string const& needle,
+	FindStringCallback const& notification = FindStringCallback())
 {
-	std::ifstream fileStream = GetStreamFromFile(file);
+	std::ifstream fileStream = GetStreamFromFile(filePath);
 	std::string line;
 	bool found = false;
 	for (size_t lineIndex = 1; std::getline(fileStream, line); lineIndex++)
 	{
+		//Review: поищи стандартный способ сделать тоже самое, что-то типа find_all; проще - лучше
+		//Ответ: find_all нет стандартной функции.
 		size_t pos = line.find(needle, 0);
 		while (pos != std::string::npos)
 		{
 			found = true;
-			if (callback) callback(lineIndex, line, pos);
+			notification(lineIndex, line, pos);
 			pos = line.find(needle, pos + 1);
 		}
 	}
@@ -53,19 +55,18 @@ void CheckArguments(int argc)
 
 int main(int argc, char* argv[])
 {
-	setlocale(LC_ALL, "Rus");
+	setlocale(LC_ALL, ".1251");
 
 	try
 	{
 		CheckArguments(argc);
-
 		if (!FindStringInFile(argv[1] /*file*/, argv[2] /*NeedToFind*/, PrintFoundLineIndex))
 		{
 			std::cout << "Text not found." << std::endl;
 			return 1;
 		}
 	}
-	catch (const std::exception& e)
+	catch (const std::invalid_argument& e)
 	{
 		std::cout << e.what() << std::endl;
 		return 1;

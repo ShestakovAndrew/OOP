@@ -44,9 +44,9 @@ fc.exe "%TEMP%\non_existing_file_name_output.txt" test_files\file_missing_result
 if ERRORLEVEL 1 goto err
 
 rem ожидаем ненулевой код, если не верные аргументы
-%PROGRAM% test_files\one_match_in_string.txt > "D:\OPP\FindText\file_missing_argv_output.txt"
+%PROGRAM% test_files\one_match_in_string.txt > "%TEMP%\file_missing_argv_output.txt"
 if NOT ERRORLEVEL 1 goto err
-fc.exe "D:\OPP\FindText\file_missing_argv_output.txt" test_files\file_missing_argv_result.txt
+fc.exe "%TEMP%\file_missing_argv_output.txt" test_files\file_missing_argv_result.txt
 if ERRORLEVEL 1 goto err
 
 echo Program testing succeeded
