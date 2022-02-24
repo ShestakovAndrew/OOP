@@ -2,34 +2,32 @@
 #include <sstream>
 #include <functional>
 #include <fstream>
-#include <string>
 #include <Windows.h>
 
-using namespace std;
-using FindStringCallback = function<void(size_t lineIndex, const string& line, size_t foundPos)>;
+using FindStringCallback = std::function<void(size_t lineIndex, const std::string& line, size_t foundPos)>;
 
-ifstream GetStreamFromFile(const char* filePath)
+std::ifstream GetStreamFromFile(const char* filePath)
 {
-	ifstream file(filePath);
+	std::ifstream file(filePath);
 	if (!file.is_open())
 	{
-		throw invalid_argument("Failed to open file for searching.");
+		throw std::invalid_argument("Failed to open file for searching.");
 	}
 	return file;
 }
 
 bool FindStringInFile(
 	const char* file,
-	const string& needle,
+	const std::string& needle,
 	const FindStringCallback& callback = FindStringCallback())
 {
-	ifstream fileStream = GetStreamFromFile(file);
-	string line;
+	std::ifstream fileStream = GetStreamFromFile(file);
+	std::string line;
 	bool found = false;
-	for (size_t lineIndex = 1; getline(fileStream, line); lineIndex++)
+	for (size_t lineIndex = 1; std::getline(fileStream, line); lineIndex++)
 	{
 		size_t pos = line.find(needle, 0);
-		while (pos != string::npos)
+		while (pos != std::string::npos)
 		{
 			found = true;
 			if (callback) callback(lineIndex, line, pos);
@@ -39,9 +37,18 @@ bool FindStringInFile(
 	return found;
 } 
 
-void PrintFoundLineIndex(size_t lineIndex, string const& line, size_t foundPos)
+void PrintFoundLineIndex(size_t lineIndex, std::string const& line, size_t foundPos)
 {
-	cout << "lineIndex: " << lineIndex << ";" << " foundPos: " << foundPos << ";" << " line: " << line << endl;
+	std::cout << "lineIndex: " << lineIndex << ";" << " foundPos: " << foundPos << ";" << " line: " << line << std::endl;
+}
+
+void CheckArguments(int argc)
+{
+	if (argc != 3)
+	{
+		std::cout << "Usage: findtext.exe <file name> <text to search>" << std::endl;
+		throw std::invalid_argument("Invalid arguments count.");
+	}
 }
 
 int main(int argc, char* argv[])
@@ -50,22 +57,17 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		if (argc != 3)
-		{
-			cout << "Invalid arguments count." << endl
-				<< "Usage: findtext.exe <file name> <text to search>" << endl;
-			return 1;
-		}
+		CheckArguments(argc);
 
 		if (!FindStringInFile(argv[1] /*file*/, argv[2] /*NeedToFind*/, PrintFoundLineIndex))
 		{
-			cout << "Text not found." << endl;
+			std::cout << "Text not found." << std::endl;
 			return 1;
 		}
 	}
-	catch (const exception& e)
+	catch (const std::exception& e)
 	{
-		cout << e.what() << endl;
+		std::cout << e.what() << std::endl;
 		return 1;
 	}
 
