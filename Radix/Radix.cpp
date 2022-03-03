@@ -49,7 +49,7 @@ void Converting10BaseToAnyBase(Data& data)
 void ConvertingAnyBaseTo10Base(Data& data)
 {
 	size_t amountNumbers = data.valueInfo.value.size();
-	uint32_t powerOfBase = 1;
+	uint64_t powerOfBase = 1;
 	int64_t decimalNumber = 0;
 
 	for (size_t i = amountNumbers - 1; i != std::string::npos; i--)
@@ -68,6 +68,7 @@ void ConvertingAnyBaseTo10Base(Data& data)
 }
 void OutputData(Data& data)
 {
+	if (data.valueInfo.isNegative) std::cout << "-";
 	std::cout << data.valueInfo.value << std::endl;
 }
 void ConvertingRadixs(Data& data)
@@ -89,6 +90,7 @@ void ConvertingRadixs(Data& data)
 Data getDataFromArguments(char* argv[])
 {
 	Data result; 
+
 	result.sourceNotation = static_cast<uint16_t>(std::stoi(argv[1])); 
 	result.destinationNotation = static_cast<uint16_t>(std::stoi(argv[2]));
 	result.valueInfo.value = argv[3];
