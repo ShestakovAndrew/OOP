@@ -54,11 +54,6 @@ void ConvertingAnyBaseTo10Base(Data& data)
 
 	for (size_t i = amountNumbers - 1; i != std::string::npos; i--)
 	{
-		if (SymbolToNumber(data.valueInfo.value[i]) >= data.sourceNotation)
-		{
-			throw std::out_of_range("Invalid convert to 10 base.");
-		}
-
 		decimalNumber += SymbolToNumber(data.valueInfo.value[i]) * powerOfBase;
 		powerOfBase = powerOfBase * data.sourceNotation;
 	}
@@ -66,11 +61,7 @@ void ConvertingAnyBaseTo10Base(Data& data)
 	data.sourceNotation = 10;
 	data.valueInfo.value = std::to_string(decimalNumber);
 }
-void OutputData(Data& data)
-{
-	if (data.valueInfo.isNegative) std::cout << "-";
-	std::cout << data.valueInfo.value << std::endl;
-}
+
 void ConvertingRadixs(Data& data)
 {
 	if (data.sourceNotation != 10 and data.destinationNotation != 10)
@@ -103,25 +94,39 @@ Data getDataFromArguments(char* argv[])
 
 	return result;
 }
+
 void ValidateData(Data& data)
 {
 	if ((data.destinationNotation < 2 or data.destinationNotation > 35) or
 		(data.sourceNotation < 2 or data.sourceNotation > 35))
 	{
-		throw std::out_of_range("Invalid base number.");
+		throw std::invalid_argument("Invalid base in arguments.");
+	}
+
+	for (const char symbol : data.valueInfo.value)
+	{
+		if (SymbolToNumber(symbol) >= data.sourceNotation)
+		{
+			throw std::out_of_range("Invalid base of value.");
+		}
 	}
 }
 void CheckArguments(int argc)
 {
 	if (argc != 4)
 	{
-		std::cout << "Invalid arguments count." << std::endl
-			<< "\tUsage: findtext.exe <source notation> <destination notation> <value>" << std::endl
-			<< "\t\t<source notation> - current number system." << std::endl
-			<< "\t\t<destination notation> - required number system." << std::endl
-			<< "\t\t<value> - number/string to translate." << std::endl;
+		std::cout << "Usage: findtext.exe <source notation> <destination notation> <value>" << std::endl
+			<< "\t<source notation> - current number system (2 - 35)." << std::endl
+			<< "\t<destination notation> - required number system (2 - 35)." << std::endl
+			<< "\t<value> - number to translate." << std::endl;
 		throw std::invalid_argument("Invalid arguments count.");
 	}
+}
+
+void OutputData(Data& data)
+{
+	if (data.valueInfo.isNegative) std::cout << "-";
+	std::cout << data.valueInfo.value << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -138,9 +143,9 @@ int main(int argc, char* argv[])
 		ConvertingRadixs(data);
 		OutputData(data);
 	}
-	catch (const std::exception& e)
+	catch (std::logic_error const& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cout << e.what() << std::endl;
 		return 1;
 	}
 }
