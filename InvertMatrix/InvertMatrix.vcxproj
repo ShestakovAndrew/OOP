@@ -142,6 +142,9 @@
   <ItemGroup>
     <ClCompile Include="InvertMatrix.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="auto_test.bat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
