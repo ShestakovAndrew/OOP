@@ -16,11 +16,12 @@ void PrintMatrix(Matrix const& matrix)
 	{
 		for (auto const& element : row)
 		{
-			std::cout << std::fixed << std::setprecision(3) << element << "\t";
+			std::cout << std::fixed << std::setprecision(3) << element << " ";
 		}
 		std::cout << std::endl;
 	}
 }
+
 Matrix MatrixTranspose(Matrix const& matrix)
 {
 	Matrix result;
@@ -35,7 +36,8 @@ Matrix MatrixTranspose(Matrix const& matrix)
 	}
 	return result;
 }
-Matrix MinorByElementInMatrix(Matrix const& matrix, size_t elemRow, size_t elemCol)
+
+Matrix GetMinorMatrixByElement(Matrix const& matrix, size_t elemRow, size_t elemCol)
 {
 	Matrix result;
 
@@ -53,8 +55,14 @@ Matrix MinorByElementInMatrix(Matrix const& matrix, size_t elemRow, size_t elemC
 	}
 	return result;
 }
+
 double MatrixDeterminant(Matrix const& matrix)
 {
+	if (matrix.size() == 1)
+	{
+		return matrix[0][0];
+	}
+
 	if (matrix.size() == 2)
 	{
 		return (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]);
@@ -65,18 +73,20 @@ double MatrixDeterminant(Matrix const& matrix)
 
 	for (size_t col = 0; col != matrix.size(); col++)
 	{
-		Matrix minor = MinorByElementInMatrix(matrix, 0, col);
+		Matrix minor = GetMinorMatrixByElement(matrix, 0, col);
 		sign = (((0 + col) % 2) == 0) ? 1 : -1;
 		determinate += sign * matrix[0][col] * MatrixDeterminant(minor);
 	}
 
 	return determinate;
 }
+
 double MinorOfElementInMatrix(Matrix const& matrix, size_t elemRow, size_t elemCol)
 {
-	Matrix minorMatrix = MinorByElementInMatrix(matrix, elemRow, elemCol);
+	Matrix minorMatrix = GetMinorMatrixByElement(matrix, elemRow, elemCol);
 	return MatrixDeterminant(minorMatrix);
 }
+
 Matrix MatrixAlgebraicAdditions(Matrix const& matrix)
 {
 	Matrix result;
@@ -94,6 +104,7 @@ Matrix MatrixAlgebraicAdditions(Matrix const& matrix)
 	}
 	return result;
 }
+
 Matrix InvertMatrix(Matrix const& matrix)
 {
 	double determinant = MatrixDeterminant(matrix);
@@ -103,8 +114,9 @@ Matrix InvertMatrix(Matrix const& matrix)
 		throw std::logic_error("Inverse doesn't exist.");
 	}
 
-	Matrix matrixTranspose = MatrixTranspose(matrix);
-	Matrix algebraicAdditionsMatrix = MatrixAlgebraicAdditions(matrixTranspose);
+	Matrix transposeMatrixAlgebraicComplements = 
+		MatrixTranspose(MatrixAlgebraicAdditions(matrix));
+
 	Matrix InvertMatrix;
 
 	for (size_t i = 0; i < matrix.size(); i++)
@@ -112,13 +124,14 @@ Matrix InvertMatrix(Matrix const& matrix)
 		std::vector<double> rowMatrix;
 		for (size_t j = 0; j < matrix.size(); j++)
 		{
-			rowMatrix.push_back(algebraicAdditionsMatrix[i][j] / determinant);
+			rowMatrix.push_back(transposeMatrixAlgebraicComplements[i][j] / determinant);
 		}
 		InvertMatrix.push_back(rowMatrix);
 	}
 	return InvertMatrix;
 }
-Matrix FillMatrix(std::ifstream& fileContent)
+
+Matrix FillMatrixFromFileStream(std::ifstream& fileContent)
 {
 	Matrix result;
 	std::string line;
@@ -135,8 +148,10 @@ Matrix FillMatrix(std::ifstream& fileContent)
 		result.push_back(tempv);
 	}
 	fileContent.close();
+
 	return result;
 }
+
 std::ifstream GetFileStream(std::string const& filePath)
 {
 	std::ifstream file(filePath);
@@ -146,25 +161,44 @@ std::ifstream GetFileStream(std::string const& filePath)
 	}
 	return file;
 }
+
 Matrix ReadMatrixFromFile(std::string const& filePath)
 {
 	std::ifstream fileStream = GetFileStream(filePath);
-	return FillMatrix(fileStream);
+	return FillMatrixFromFileStream(fileStream);
 }
+
 void CheckArguments(int argc)
 {
 	if (argc != 2)
 	{
-		std::cout << "Invalid arguments count." << std::endl
-			<< "\tUsage: findtext.exe <matrix filePath>" << std::endl
-			<< "\t\t<matrix filePath> - path to file, where matrix coefficients are stored." << std::endl;
+		std::cout << "Usage: findtext.exe <matrix filePath>" << std::endl
+			<< "\t<matrix filePath> - path to file, where matrix coefficients are stored." << std::endl;
 		throw std::invalid_argument("Invalid arguments count.");
 	}
 }
+
+void ValidateMatrix(Matrix const& matrix)
+{
+	if (matrix.empty())
+	{
+		throw std::length_error("Matrix is empty.");
+	}
+
+	for (size_t i = 0; i != matrix.size(); i++)
+	{
+		if (matrix.size() != matrix[i].size())
+		{
+			throw std::length_error("Matrix is not square.");
+		}
+	}	
+}
+
 void StartInvertMatrix(int argc, char* argv[])
 {
 	CheckArguments(argc);
 	Matrix matrix = ReadMatrixFromFile(argv[1]);
+	ValidateMatrix(matrix);
 	Matrix invertMatrix = InvertMatrix(matrix);
 	PrintMatrix(invertMatrix);
 }
@@ -184,4 +218,5 @@ int main(int argc, char* argv[])
 		std::cout << e.what() << std::endl;
 		return 1;
 	}
+
 }

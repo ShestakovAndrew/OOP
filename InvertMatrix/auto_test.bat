@@ -2,39 +2,45 @@ rem Переменная PROGRAM будет хранить первый аргумент командной строки заключённы
 set PROGRAM="%~1"
 
 rem матрица не квадратная 
-%PROGRAM% > "%TEMP%\different_base.txt"
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\different_base.txt" test_files\different_base_result.txt
+%PROGRAM% test_files\matrix_not_square.txt > "%TEMP%\matrix_not_square.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\matrix_not_square.txt" test_files\matrix_not_square_result.txt
 if ERRORLEVEL 1 goto err
 
 rem файл пустой
-%PROGRAM% 10 10 8313  > "%TEMP%\bases_are_the_same.txt"
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\bases_are_the_same.txt" test_files\bases_are_the_same_result.txt
+%PROGRAM% test_files\empty_file.txt  > "%TEMP%\empty_file.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\empty_file.txt" test_files\empty_file_result.txt
 if ERRORLEVEL 1 goto err
 
 rem матрица вырожденная 
-%PROGRAM% 10 31 8371973193 > "%TEMP%\firstbase_10_second_n.txt"
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\firstbase_10_second_n.txt" test_files\firstbase_10_second_n_result.txt
+%PROGRAM% test_files\degenerate_matrix.txt > "%TEMP%\degenerate_matrix.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\degenerate_matrix.txt" test_files\degenerate_matrix_result.txt
 if ERRORLEVEL 1 goto err
 
 rem матрица 3x3
-%PROGRAM% 6 10 4324315 > "%TEMP%\secondbase_10_first_n.txt"
+%PROGRAM% test_files\matrix_3x3.txt > "%TEMP%\matrix_3x3.txt"
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\secondbase_10_first_n.txt" test_files\secondbase_10_first_n_result.txt
+fc.exe "%TEMP%\matrix_3x3.txt" test_files\matrix_3x3_result.txt
 if ERRORLEVEL 1 goto err
 
 rem матрица 4x4
-%PROGRAM% 15 10 0 > "%TEMP%\value_0.txt"
+%PROGRAM% test_files\matrix_4x4.txt > "%TEMP%\matrix_4x4.txt"
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\value_0.txt" test_files\value_0_result.txt
+fc.exe "%TEMP%\matrix_4x4.txt" test_files\matrix_4x4_result.txt
 if ERRORLEVEL 1 goto err
 
-rem нет аргумента 
-%PROGRAM% 5 10 -41321432 > "%TEMP%\negative_number.txt"
+rem нет файла
+%PROGRAM% test_files\file_non_exist.txt > "%TEMP%\file_non_exist.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\file_non_exist.txt" test_files\file_non_exist_result.txt
 if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\negative_number.txt" test_files\negative_number_result.txt
+
+rem нет аргумента
+%PROGRAM% > "%TEMP%\non_argument.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\non_argument.txt" test_files\non_argument_result.txt
 if ERRORLEVEL 1 goto err
 
 echo Program testing succeeded
