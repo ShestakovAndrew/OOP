@@ -19,6 +19,18 @@ if NOT ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\degenerate_matrix.txt" test_files\degenerate_matrix_result.txt
 if ERRORLEVEL 1 goto err
 
+rem файл из одного числа
+%PROGRAM% test_files\single_number.txt > "%TEMP%\single_number.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\single_number.txt" test_files\single_number_result.txt
+if ERRORLEVEL 1 goto err
+
+rem матрица 2x2
+%PROGRAM% test_files\matrix_2x2.txt > "%TEMP%\matrix_2x2.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\matrix_2x2.txt" test_files\matrix_2x2_result.txt
+if ERRORLEVEL 1 goto err
+
 rem матрица 3x3
 %PROGRAM% test_files\matrix_3x3.txt > "%TEMP%\matrix_3x3.txt"
 if ERRORLEVEL 1 goto err

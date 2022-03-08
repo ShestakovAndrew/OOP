@@ -81,7 +81,7 @@ double MatrixDeterminant(Matrix const& matrix)
 	return determinate;
 }
 
-double MinorOfElementInMatrix(Matrix const& matrix, size_t elemRow, size_t elemCol)
+double DeterminantOfMinorMatrixByElement(Matrix const& matrix, size_t elemRow, size_t elemCol)
 {
 	Matrix minorMatrix = GetMinorMatrixByElement(matrix, elemRow, elemCol);
 	return MatrixDeterminant(minorMatrix);
@@ -98,7 +98,7 @@ Matrix MatrixAlgebraicAdditions(Matrix const& matrix)
 		for (size_t j = 0; j < matrix.size(); j++)
 		{
 			sign = ((i + j) % 2 == 0) ? 1 : -1;
-			col.push_back(sign * MinorOfElementInMatrix(matrix, i, j));
+			col.push_back(sign * DeterminantOfMinorMatrixByElement(matrix, i, j));
 		}
 		result.push_back(col);
 	}
@@ -183,6 +183,11 @@ void ValidateMatrix(Matrix const& matrix)
 	if (matrix.empty())
 	{
 		throw std::length_error("Matrix is empty.");
+	}
+
+	if (matrix.size() == 1)
+	{
+		throw std::length_error("Matrix should be minimum 2x2.");
 	}
 
 	for (size_t i = 0; i != matrix.size(); i++)
