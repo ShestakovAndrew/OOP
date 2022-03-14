@@ -27,12 +27,12 @@ Matrix MatrixTranspose(Matrix const& matrix)
 	Matrix result;
 	for (size_t i = 0; i < matrix.size(); i++)
 	{ 
-		std::vector<double> rowMatrix;
+		std::vector<double> matrixRow;
 		for (size_t j = 0; j < matrix.size(); j++)
 		{
-			rowMatrix.push_back(matrix[j][i]);
+			matrixRow.push_back(matrix[j][i]);
 		}
-		result.push_back(rowMatrix);
+		result.push_back(matrixRow);
 	}
 	return result;
 }
@@ -43,15 +43,16 @@ Matrix GetMinorMatrixByElement(Matrix const& matrix, size_t elemRow, size_t elem
 
 	for (size_t row = 0; row < matrix.size(); row++)
 	{
-		std::vector<double> rowMatrix;
+		//не правильная последовательность у имени
+		std::vector<double> matrixRow;
 		for (size_t col = 0; col < matrix.size(); col++)
 		{
 			if (row != elemRow && col != elemCol)
 			{
-				rowMatrix.push_back(matrix[row][col]);
+				matrixRow.push_back(matrix[row][col]);
 			}
 		}
-		if (!rowMatrix.empty()) result.push_back(rowMatrix);
+		if (!matrixRow.empty()) result.push_back(matrixRow);
 	}
 	return result;
 }
@@ -62,23 +63,22 @@ double MatrixDeterminant(Matrix const& matrix)
 	{
 		return matrix[0][0];
 	}
-
 	if (matrix.size() == 2)
 	{
 		return (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]);
 	}
 
-	double determinate = 0;
+	double determinant = 0;
 	int8_t sign = 1;
 
 	for (size_t col = 0; col != matrix.size(); col++)
 	{
 		Matrix minor = GetMinorMatrixByElement(matrix, 0, col);
 		sign = (((0 + col) % 2) == 0) ? 1 : -1;
-		determinate += sign * matrix[0][col] * MatrixDeterminant(minor);
+		determinant += sign * matrix[0][col] * MatrixDeterminant(minor);
 	}
 
-	return determinate;
+	return determinant;
 }
 
 double DeterminantOfMinorMatrixByElement(Matrix const& matrix, size_t elemRow, size_t elemCol)
@@ -87,21 +87,38 @@ double DeterminantOfMinorMatrixByElement(Matrix const& matrix, size_t elemRow, s
 	return MatrixDeterminant(minorMatrix);
 }
 
-Matrix MatrixAlgebraicAdditions(Matrix const& matrix)
+Matrix MatrixAdjoint(Matrix const& matrix)
 {
 	Matrix result;
 	int8_t sign = 1;
 
 	for (size_t i = 0; i < matrix.size(); i++)
 	{
-		std::vector<double> col;
+		std::vector<double> matrixCol;
 		for (size_t j = 0; j < matrix.size(); j++)
 		{
 			sign = ((i + j) % 2 == 0) ? 1 : -1;
-			col.push_back(sign * DeterminantOfMinorMatrixByElement(matrix, i, j));
+			matrixCol.push_back(sign * DeterminantOfMinorMatrixByElement(matrix, i, j));
 		}
-		result.push_back(col);
+		result.push_back(matrixCol);
 	}
+	return result;
+}
+
+Matrix MultiplyMatrixByNumber(Matrix const& matrix, double number)
+{
+	Matrix result;
+
+	for (size_t i = 0; i < matrix.size(); i++)
+	{
+		std::vector<double> matrixRow;
+		for (size_t j = 0; j < matrix.size(); j++)
+		{
+			matrixRow.push_back(matrix[i][j] * number);
+		}
+		result.push_back(matrixRow);
+	}
+
 	return result;
 }
 
@@ -111,24 +128,14 @@ Matrix InvertMatrix(Matrix const& matrix)
 
 	if (determinant == 0)
 	{
-		throw std::logic_error("Inverse doesn't exist.");
+		throw std::invalid_argument("Inverse doesn't exist.");
 	}
 
-	Matrix transposeMatrixAlgebraicComplements = 
-		MatrixTranspose(MatrixAlgebraicAdditions(matrix));
+	Matrix transposeAdjointMatrix =	MatrixTranspose(MatrixAdjoint(matrix));
+	
+	Matrix invertMatrix = MultiplyMatrixByNumber(transposeAdjointMatrix, 1 / determinant);
 
-	Matrix InvertMatrix;
-
-	for (size_t i = 0; i < matrix.size(); i++)
-	{
-		std::vector<double> rowMatrix;
-		for (size_t j = 0; j < matrix.size(); j++)
-		{
-			rowMatrix.push_back(transposeMatrixAlgebraicComplements[i][j] / determinant);
-		}
-		InvertMatrix.push_back(rowMatrix);
-	}
-	return InvertMatrix;
+	return invertMatrix;
 }
 
 Matrix FillMatrixFromFileStream(std::ifstream& fileContent)
@@ -162,20 +169,17 @@ std::ifstream GetFileStream(std::string const& filePath)
 	return file;
 }
 
-Matrix ReadMatrixFromFile(std::string const& filePath)
-{
-	std::ifstream fileStream = GetFileStream(filePath);
-	return FillMatrixFromFileStream(fileStream);
-}
-
-void CheckArguments(int argc)
+std::ifstream ValidateFilePath(int argc, char* argv[])
 {
 	if (argc != 2)
 	{
-		std::cout << "Usage: findtext.exe <matrix filePath>" << std::endl
+		std::cout << "Usage: InvertMatrix.exe <matrix filePath>" << std::endl
 			<< "\t<matrix filePath> - path to file, where matrix coefficients are stored." << std::endl;
 		throw std::invalid_argument("Invalid arguments count.");
 	}
+
+	std::ifstream fileStream = GetFileStream(argv[1]);
+	return fileStream;
 }
 
 void ValidateMatrix(Matrix const& matrix)
@@ -199,24 +203,18 @@ void ValidateMatrix(Matrix const& matrix)
 	}	
 }
 
-void StartInvertMatrix(int argc, char* argv[])
-{
-	CheckArguments(argc);
-	Matrix matrix = ReadMatrixFromFile(argv[1]);
-	ValidateMatrix(matrix);
-	Matrix invertMatrix = InvertMatrix(matrix);
-	PrintMatrix(invertMatrix);
-}
-
 int main(int argc, char* argv[])
 {
-	setlocale(LC_ALL, ".1251");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
 	try
 	{
-		StartInvertMatrix(argc, argv);
+		std::ifstream fileStream = ValidateFilePath(argc, argv);
+		Matrix matrix = FillMatrixFromFileStream(fileStream);
+		ValidateMatrix(matrix);
+		Matrix invertMatrix = InvertMatrix(matrix);
+		PrintMatrix(invertMatrix);
 	}
 	catch (std::logic_error const& e)
 	{
