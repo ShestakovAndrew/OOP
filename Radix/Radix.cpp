@@ -1,22 +1,14 @@
 #include <iostream>
 #include <windows.h>
 #include <string>
-#include <map>
 
 namespace
 {
-	struct Value
-	{
-		bool isNegative = false;
-		bool isFloat = false;
-		std::string value = "";
-	};
-
 	struct Data
 	{
 		uint16_t sourceNotation = 0;
 		uint16_t destinationNotation = 0;
-		Value valueInfo;
+		std::string value;
 	};
 }
 
@@ -25,77 +17,60 @@ uint16_t SymbolToNumber(char symbol)
 	if (symbol >= '0' && symbol <= '9') return (uint16_t)symbol - '0';
 	else return (uint16_t)symbol - 'A' + 10;
 }
+
 char NumberToSymbol(uint16_t number)
 {
 	if (number >= 0 && number <= 9)	return (char)(number + '0');
 	else return (char)(number - 10 + 'A');
 }
 
-void Converting10BaseToAnyBase(Data& data)
+std::string ConvertingFromDecimalToAnyNumberSystem(int64_t numderDecimal, uint16_t destinationNotation)
 {
-	size_t index = 0;
-	int64_t decimalNumber = stoll(data.valueInfo.value);
 	std::string result;
 
-	while (decimalNumber > 0)
+	bool isNegative = (numderDecimal < 0) ? true : false;
+
+	if (isNegative) numderDecimal *= -1;
+
+	while (numderDecimal > 0)
 	{
-		result.push_back(NumberToSymbol(decimalNumber % data.destinationNotation));
-		decimalNumber /= data.destinationNotation;
+		result.push_back(NumberToSymbol(numderDecimal % destinationNotation));
+		numderDecimal /= destinationNotation;
 	}
 
 	reverse(result.begin(), result.end());
-	data.valueInfo.value = result;
+
+	return isNegative ? ("-" + result) : result;
 }
-void ConvertingAnyBaseTo10Base(Data& data)
+
+int64_t ConvertingToDecimalNotation(std::string const& value, uint16_t sourceNotation)
 {
-	size_t amountNumbers = data.valueInfo.value.size();
+	bool isNegative = (value[0] == '-') ? true : false;
+
+	size_t amountNumbers = value.size() - 1;
 	uint64_t powerOfBase = 1;
 	int64_t decimalNumber = 0;
 
-	for (size_t i = amountNumbers - 1; i != std::string::npos; i--)
+	for (size_t i = amountNumbers; i != std::string::npos; i--)
 	{
-		decimalNumber += SymbolToNumber(data.valueInfo.value[i]) * powerOfBase;
-		powerOfBase = powerOfBase * data.sourceNotation;
+		if (value[i] == '-') break;
+
+		decimalNumber += SymbolToNumber(value[i]) * powerOfBase;
+		powerOfBase = powerOfBase * sourceNotation;
 	}
 
-	data.sourceNotation = 10;
-	data.valueInfo.value = std::to_string(decimalNumber);
+	return isNegative ? (-1 * decimalNumber) : decimalNumber;
 }
 
-void ConvertingRadixs(Data& data)
+std::string Converting(std::string const& value, uint16_t destinationNotation, uint16_t sourceNotation)
 {
-	if (data.sourceNotation != 10 and data.destinationNotation != 10)
-	{
-		ConvertingAnyBaseTo10Base(data);
-		Converting10BaseToAnyBase(data);
-	}
-	else if (data.destinationNotation == 10)
-	{
-		ConvertingAnyBaseTo10Base(data);
-	}
-	else if (data.sourceNotation == 10)
-	{
-		Converting10BaseToAnyBase(data);
-	}
-}
-Data getDataFromArguments(char* argv[])
-{
-	Data result; 
+	if (sourceNotation == destinationNotation or value == "0") return value;
 
-	result.sourceNotation = static_cast<uint16_t>(std::stoi(argv[1])); 
-	result.destinationNotation = static_cast<uint16_t>(std::stoi(argv[2]));
-	result.valueInfo.value = argv[3];
-
-	if (result.valueInfo.value.find("-") != std::string::npos)
-	{
-		result.valueInfo.value.erase(0, 1);
-		result.valueInfo.isNegative = true;
-	}
-
-	return result;
+	int64_t numderDecimal = ConvertingToDecimalNotation(value, sourceNotation);
+	return ConvertingFromDecimalToAnyNumberSystem(numderDecimal, destinationNotation);
 }
 
-void ValidateData(Data& data)
+void ValidateData(Data const& data)
 {
 	if ((data.destinationNotation < 2 or data.destinationNotation > 35) or
 		(data.sourceNotation < 2 or data.sourceNotation > 35))
@@ -103,14 +78,17 @@ void ValidateData(Data& data)
 		throw std::invalid_argument("Invalid base in arguments.");
 	}
 
-	for (const char symbol : data.valueInfo.value)
+	for (const char symbol : data.value)
 	{
+		if (symbol == '-') continue;
+
 		if (SymbolToNumber(symbol) >= data.sourceNotation)
 		{
 			throw std::out_of_range("Invalid base of value.");
 		}
 	}
 }
+
 void CheckArguments(int argc)
 {
 	if (argc != 4)
@@ -123,25 +101,29 @@ void CheckArguments(int argc)
 	}
 }
 
-void OutputData(Data& data)
+Data getDataFromArguments(int argc, char* argv[])
 {
-	if (data.valueInfo.isNegative) std::cout << "-";
-	std::cout << data.valueInfo.value << std::endl;
+	CheckArguments(argc);
+	Data result;
+
+	result.sourceNotation = static_cast<uint16_t>(std::stoi(argv[1]));
+	result.destinationNotation = static_cast<uint16_t>(std::stoi(argv[2]));
+	result.value = argv[3];
+
+	ValidateData(result);
+
+	return result;
 }
 
 int main(int argc, char* argv[])
 {
-	setlocale(LC_ALL, ".1251");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
 	try
 	{
-		CheckArguments(argc);
-		Data data = getDataFromArguments(argv);
-		ValidateData(data);
-		ConvertingRadixs(data);
-		OutputData(data);
+		Data data = getDataFromArguments(argc, argv);
+		std::cout << Converting(data.value, data.destinationNotation, data.sourceNotation) << std::endl;
 	}
 	catch (std::logic_error const& e)
 	{
