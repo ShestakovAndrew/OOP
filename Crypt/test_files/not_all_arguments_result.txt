@@ -1,0 +1,6 @@
+Usage: crypt.exe <crept/decrypt> <input file> <output file> <key>
+	<crypt/decrypt> - mode  
+	<input file> - path to input file.
+	<output file> - path to output file.
+	<key> - integer number in range 0-255.
+Invalid arguments count.

@@ -6,7 +6,7 @@
 
 namespace
 {
-	using CryptInstruction = std::function<char(char symbol, uint8_t key)>;
+	using CryptInstruction = std::function<char(char symbolToCrypt, uint8_t key)>;
 
 	struct CryptData
 	{
@@ -56,16 +56,21 @@ CryptData ValidateArguments(int argc, char* argv[])
 {
 	ArgumentsCountCheck(argc);
 
+	if (strcmp(argv[1], "crypt") and strcmp(argv[1], "decrypt"))
+	{
+		throw std::invalid_argument("Encryption/decryption instruction not set.");
+	}
+
+	if (std::stoi(argv[4]) < 0 or std::stoi(argv[4]) > 255)
+	{
+		throw std::invalid_argument("Key out of range. Key must be 0 - 255.");
+	}
+
 	CryptData cryptData;
 
 	cryptData.inputFile = GetOpenFileForRead(argv[2]);
 	cryptData.outputFile = GetOpenFileForWrite(argv[3]);
 	cryptData.key = std::stoi(argv[4]);
-
-	if (cryptData.key < 0 or cryptData.key > 255)
-	{
-		throw std::invalid_argument("Key out of range. Key must be 0 - 255.");
-	}
 
 	return cryptData;
 }
@@ -76,7 +81,7 @@ void CryptText(
 {
 	char symbol;
 
-	while (cryptData.inputFile.read(&symbol,1))
+	while (cryptData.inputFile.read(&symbol, 1))
 	{
 		if (instructionToCrypt)
 		{
@@ -120,11 +125,18 @@ int main(int argc, char* argv[])
 	{
 		CryptData cryptData = ValidateArguments(argc, argv);
 
-		(argv[1] == "crypt") ? CryptText(cryptData, CryptSymbol) 
-			: CryptText(cryptData, DecryptSymbol);
+		if (!strcmp(argv[1],"crypt"))
+		{
+			CryptText(cryptData, CryptSymbol);
+		}
+		else
+		{
+			CryptText(cryptData, DecryptSymbol);
+		}
 	}
 	catch (const std::exception& error)
 	{
 		std::cout << error.what() << std::endl;
+		return 1;
 	}
 }

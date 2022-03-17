@@ -2,63 +2,79 @@ rem Переменная PROGRAM будет хранить первый аргумент командной строки заключённы
 set PROGRAM="%~1"
 
 rem не все аргументы
-%PROGRAM% test_files\input_file.txt  > "%TEMP%\one_match_in_string_output.txt"
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\one_match_in_string_output.txt" test_files\one_match_in_string_result.txt
-if ERRORLEVEL 1 goto err
-
-rem не верный входной файл
-%PROGRAM% test_files\more_match_in_string.txt cat > "%TEMP%\more_match_in_string_output.txt"
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\more_match_in_string_output.txt" test_files\more_match_in_string_result.txt
-if ERRORLEVEL 1 goto err
-
-rem не верный выходной файл
-%PROGRAM% test_files\more_match_in_multi_string.txt cat > "%TEMP%\more_match_in_multi_string_output.txt"
-if ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\more_match_in_multi_string_output.txt" test_files\more_match_in_multi_string_result.txt
-if ERRORLEVEL 1 goto err
-
-rem не правильный ключ
-%PROGRAM% test_files\file_empty.txt cat > "%TEMP%\file_empty_output.txt"
+%PROGRAM% crypt test_files\input_file_one_byte.txt test_files\output_file_one_byte.txt > "%TEMP%\output_err.txt"
 if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\file_empty_output.txt" test_files\file_empty_result.txt
+fc.exe "%TEMP%\output_err.txt" test_files\not_all_arguments_result.txt
+if ERRORLEVEL 1 goto err
+
+rem несуществующий входной файл
+%PROGRAM% crypt test_files\non_existent_input_file.txt test_files\output_file_one_byte.txt 170 > "%TEMP%\output_err.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\non_existent_input_file_result.txt
+if ERRORLEVEL 1 goto err
+
+rem неправильный ключ
+%PROGRAM% crypt test_files\input_file_one_byte.txt test_files\output_file_one_byte.txt 256 > "%TEMP%\output_err.txt"
+if NOT ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\wrong_key_result.txt
 if ERRORLEVEL 1 goto err
 
 rem шифрование одного байта корректное
-%PROGRAM% test_files\non_match_in_string.txt dog > "%TEMP%\non_match_in_string_output.txt"
-if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\non_match_in_string_output.txt" test_files\file_empty_result.txt
+%PROGRAM% crypt test_files\input_file_one_byte.txt test_files\output_file_one_byte.txt 150 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe test_files\output_file_one_byte.txt test_files\crypt_one_byte_result.txt
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
 if ERRORLEVEL 1 goto err
 
-rem расшифрование байта обратно не верное с другим ключом
-%PROGRAM% test_files\non_match_in_multi_string.txt dog > "%TEMP%\non_match_in_multi_string_output.txt"
-if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\non_match_in_multi_string_output.txt" test_files\file_empty_result.txt
+rem расшифрование байта обратно верно (с верным ключом)
+%PROGRAM% decrypt test_files\crypt_one_byte_result.txt test_files\output_file_one_byte.txt 150 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe test_files\output_file_one_byte.txt test_files\input_file_one_byte.txt
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
 if ERRORLEVEL 1 goto err
 
-rem расшифрование байта обратно верное с ключом, которым шифровали.
-%PROGRAM% test_files\non_match_in_multi_string.txt dog > "%TEMP%\non_match_in_multi_string_output.txt"
+rem расшифрование байта обратно неверное (с неверным ключом)
+%PROGRAM% decrypt test_files\crypt_one_byte_result.txt test_files\output_file_one_byte.txt 151 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe test_files\output_file_one_byte.txt test_files\input_file_one_byte.txt
 if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\non_match_in_multi_string_output.txt" test_files\file_empty_result.txt
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
 if ERRORLEVEL 1 goto err
 
 rem файл для шифрования пустой 
-%PROGRAM% non-existing-file-name.txt arg > "%TEMP%\non_existing_file_name_output.txt"
-if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\non_existing_file_name_output.txt" test_files\file_missing_result.txt
+%PROGRAM% crypt test_files\empty_file.txt test_files\output_file_one_byte.txt 100 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe test_files\output_file_one_byte.txt test_files\empty_file.txt
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
 if ERRORLEVEL 1 goto err
 
-rem относительно большой текст шифруется.
-%PROGRAM% test_files\one_match_in_string.txt > "%TEMP%\file_missing_argv_output.txt"
-if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\file_missing_argv_output.txt" test_files\file_missing_argv_result.txt
+rem текст шифруется и дешифруется с верным ключом.
+%PROGRAM% crypt test_files\input_file_text.txt test_files\output_file_text.txt 255 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
 if ERRORLEVEL 1 goto err
 
-rem относительно большой текст обратно дешифруется.
-%PROGRAM% test_files\one_match_in_string.txt > "%TEMP%\file_missing_argv_output.txt"
+%PROGRAM% decrypt test_files\output_file_text.txt test_files\output_file_text_result.txt 255 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe test_files\output_file_text_result.txt test_files\input_file_text.txt
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
+if ERRORLEVEL 1 goto err
+
+rem текст шифруется, но не дешифруется с другим ключом.
+%PROGRAM% crypt test_files\input_file_text.txt test_files\output_file_text.txt 255 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
+if ERRORLEVEL 1 goto err
+
+%PROGRAM% decrypt test_files\output_file_text.txt test_files\output_file_text_result.txt 253 > "%TEMP%\output_err.txt"
+if ERRORLEVEL 1 goto err
+fc.exe test_files\output_file_text_result.txt test_files\input_file_text.txt
 if NOT ERRORLEVEL 1 goto err
-fc.exe "%TEMP%\file_missing_argv_output.txt" test_files\file_missing_argv_result.txt
+fc.exe "%TEMP%\output_err.txt" test_files\empty_file.txt
 if ERRORLEVEL 1 goto err
 
 echo Program testing succeeded
