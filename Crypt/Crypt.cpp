@@ -6,22 +6,39 @@
 
 namespace
 {
-	using CryptInstruction = std::function<char(char symbolToCrypt, uint8_t key)>;
+	using CryptFunction = std::function<char(char symbolToCrypt, uint8_t key)>;
+
+	enum class CryptionMethod
+	{
+		ENCRYPT,
+		DECRYPT
+	};
+
+	static std::unordered_map<std::string, CryptionMethod> const table = { 
+			{"encrypt", CryptionMethod::ENCRYPT}, 
+			{"decrypt", CryptionMethod::DECRYPT} 
+	};
 
 	struct CryptData
 	{
 		uint8_t key = 0;
 		std::ifstream inputFile;
 		std::ofstream outputFile;
+		CryptionMethod method = CryptionMethod::ENCRYPT;
 	};
+}
+
+bool isCryptionMethod(std::string const& str)
+{
+	return (table.find(str) != table.end()) ? true : false;
 }
 
 void ArgumentsCountCheck(int argc)
 {
 	if (argc != 5)
 	{
-		std::cout << "Usage: crypt.exe <crept/decrypt> <input file> <output file> <key>" << std::endl
-			<< "\t<crypt/decrypt> - mode  " << std::endl
+		std::cout << "Usage: crypt.exe <encrept/decrypt> <input file> <output file> <key>" << std::endl
+			<< "\t<encrypt/decrypt> - mode to crypt symbols in text." << std::endl
 			<< "\t<input file> - path to input file." << std::endl
 			<< "\t<output file> - path to output file." << std::endl
 			<< "\t<key> - integer number in range 0-255." << std::endl;
@@ -56,9 +73,9 @@ CryptData ValidateArguments(int argc, char* argv[])
 {
 	ArgumentsCountCheck(argc);
 
-	if (strcmp(argv[1], "crypt") and strcmp(argv[1], "decrypt"))
+	if (!isCryptionMethod(argv[1]))
 	{
-		throw std::invalid_argument("Encryption/decryption instruction not set.");
+		throw std::invalid_argument("Encryption/decryption instruction failed set.");
 	}
 
 	if (std::stoi(argv[4]) < 0 or std::stoi(argv[4]) > 255)
@@ -68,6 +85,7 @@ CryptData ValidateArguments(int argc, char* argv[])
 
 	CryptData cryptData;
 
+	cryptData.method = table.find(argv[1])->second;
 	cryptData.inputFile = GetOpenFileForRead(argv[2]);
 	cryptData.outputFile = GetOpenFileForWrite(argv[3]);
 	cryptData.key = std::stoi(argv[4]);
@@ -76,16 +94,18 @@ CryptData ValidateArguments(int argc, char* argv[])
 }
 
 void CryptText(
-	CryptData& cryptData,
-	CryptInstruction const& instructionToCrypt = CryptInstruction())
+	std::ifstream& inputFile,
+	std::ofstream& outputFile,
+	uint8_t key,
+	CryptFunction const& cryptSymbol = CryptFunction())
 {
 	char symbol;
 
-	while (cryptData.inputFile.read(&symbol, 1))
+	while (inputFile.read(&symbol, 1))
 	{
-		if (instructionToCrypt)
+		if (cryptSymbol)
 		{
-			cryptData.outputFile.put(instructionToCrypt(symbol, cryptData.key));
+			outputFile.put(cryptSymbol(symbol, key));
 		}
 	}
 }
@@ -106,7 +126,7 @@ char InvertMixingBitsInByte(char symbol)
 		   ((symbol << 2) & 0b10000000);
 }
 
-char CryptSymbol(char symbol, uint8_t key)
+char EncryptSymbol(char symbol, uint8_t key)
 {
 	return MixingBitsInByte(symbol ^ key);
 }
@@ -125,16 +145,16 @@ int main(int argc, char* argv[])
 	{
 		CryptData cryptData = ValidateArguments(argc, argv);
 
-		if (!strcmp(argv[1],"crypt"))
+		if (cryptData.method == CryptionMethod::ENCRYPT)
 		{
-			CryptText(cryptData, CryptSymbol);
+			CryptText(cryptData.inputFile, cryptData.outputFile, cryptData.key, EncryptSymbol);
 		}
 		else
 		{
-			CryptText(cryptData, DecryptSymbol);
+			CryptText(cryptData.inputFile, cryptData.outputFile, cryptData.key, DecryptSymbol);
 		}
 	}
-	catch (const std::exception& error)
+	catch (const std::invalid_argument& error)
 	{
 		std::cout << error.what() << std::endl;
 		return 1;
