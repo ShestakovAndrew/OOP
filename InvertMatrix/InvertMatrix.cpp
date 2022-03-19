@@ -5,6 +5,10 @@
 #include <iomanip>
 #include <windows.h>
 
+//Данная программа находит обратную матрицу за время O(n!).
+//Есть более быстрый способ, если использовать метод Гаусса. Тогда можно
+//добиться О(n^3).
+
 namespace
 {
 	using Matrix = std::vector<std::vector<double>>;	
@@ -43,7 +47,6 @@ Matrix GetMinorMatrixByElement(Matrix const& matrix, size_t elemRow, size_t elem
 
 	for (size_t row = 0; row < matrix.size(); row++)
 	{
-		//не правильная последовательность у имени
 		std::vector<double> matrixRow;
 		for (size_t col = 0; col < matrix.size(); col++)
 		{
