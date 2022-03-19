@@ -24,7 +24,7 @@ char NumberToSymbol(uint16_t number)
 	else return (char)(number - 10 + 'A');
 }
 
-std::string ConvertingFromDecimalToAnyNumberSystem(int64_t numderDecimal, uint16_t destinationNotation)
+std::string ConvertingFromDecimalTo(int64_t numderDecimal, uint16_t destinationNotation)
 {
 	std::string result;
 
@@ -43,7 +43,7 @@ std::string ConvertingFromDecimalToAnyNumberSystem(int64_t numderDecimal, uint16
 	return isNegative ? ("-" + result) : result;
 }
 
-int64_t ConvertingToDecimalNotation(std::string const& value, uint16_t sourceNotation)
+int64_t ConvertingToDecimalFrom(std::string const& value, uint16_t sourceNotation)
 {
 	bool isNegative = (value[0] == '-') ? true : false;
 
@@ -62,12 +62,12 @@ int64_t ConvertingToDecimalNotation(std::string const& value, uint16_t sourceNot
 	return isNegative ? (-1 * decimalNumber) : decimalNumber;
 }
 
-std::string Converting(std::string const& value, uint16_t destinationNotation, uint16_t sourceNotation)
+std::string Radix(std::string const& value, uint16_t destinationNotation, uint16_t sourceNotation)
 {
 	if (sourceNotation == destinationNotation or value == "0") return value;
 
-	int64_t numderDecimal = ConvertingToDecimalNotation(value, sourceNotation);
-	return ConvertingFromDecimalToAnyNumberSystem(numderDecimal, destinationNotation);
+	int64_t numderDecimal = ConvertingToDecimalFrom(value, sourceNotation);
+	return ConvertingFromDecimalTo(numderDecimal, destinationNotation);
 }
 
 void ValidateData(Data const& data)
@@ -115,6 +115,11 @@ Data getDataFromArguments(int argc, char* argv[])
 	return result;
 }
 
+void Print(std::string const& msg)
+{
+	std::cout << msg << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
 	SetConsoleCP(1251);
@@ -123,11 +128,12 @@ int main(int argc, char* argv[])
 	try
 	{
 		Data data = getDataFromArguments(argc, argv);
-		std::cout << Converting(data.value, data.destinationNotation, data.sourceNotation) << std::endl;
+		std::string result = Radix(data.value, data.destinationNotation, data.sourceNotation);
+		Print(result);
 	}
 	catch (std::logic_error const& e)
 	{
-		std::cout << e.what() << std::endl;
+		Print(e.what());
 		return 1;
 	}
 }
