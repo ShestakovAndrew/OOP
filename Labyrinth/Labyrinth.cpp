@@ -9,32 +9,27 @@
 #include <windows.h>
 #include <string>
 
+#include "boost/algorithm/cxx11/one_of.hpp"
+
 namespace
 {
-	const int8_t MAX_LABYRINTH_SIZE = 100;
-	const int8_t VON_NEUMANN_AREA = 4;
-	const int8_t MUR_AREA = 8;
-	
-	using Labyrinth = std::vector<std::vector<int16_t>>;
+	const size_t MAX_LABYRINTH_SIZE = 100;
 
 	struct PositionCell
 	{
 		int16_t row;
-		int16_t col;
+		int16_t colum;
 	};
-
 	struct LabyrinthOffset
 	{
 		size_t lengthTop;
 		size_t lengthLeft;
 	};
-
 	struct LabyrinthSize
 	{
 		size_t height;
 		size_t width;
 	};
-
 	struct BordersLabyrinth
 	{
 		PositionCell top;
@@ -42,7 +37,6 @@ namespace
 		PositionCell right;
 		PositionCell bottom;
 	};
-
 	struct LabyrintInfo
 	{
 		BordersLabyrinth bordersLabyrinth;
@@ -50,33 +44,61 @@ namespace
 		LabyrinthSize labyrinthSize;
 	};
 
+	static std::vector<PositionCell> const OFFCET_CELL_MUR = {
+		{0, 1},
+		{1, 0},
+		{0, -1},
+		{-1, 0},
+		{-1, -1},
+		{-1, 1},
+		{1, -1},
+		{1, 1}
+	};
+	static std::vector<PositionCell> const OFFCET_CELL_VON_NEUMANN = {
+		{0, 1},
+		{1, 0},
+		{0, -1},
+		{-1, 0}
+	};
+
+	using Labyrinth = std::vector<std::vector<int16_t>>;
+	using CheckFunction = std::function<bool(PositionCell const& positionCell, int16_t sizeOfWave, Labyrinth& labyrinth)>;
+
 	enum class LabyrinthCells
 	{
 		PATH = -4,
-		END = -3,
-		BLANK = -2,
-		WALL = -1,
-		START = 0,
+		END,
+		BLANK,
+		WALL,
+		START
+	};
+	enum class SearchSettings
+	{
+		VON_NEUMANN = 0,
+		MUR
 	};
 
-	std::unordered_map<char, LabyrinthCells> const LabyrinthCellsTable = {
+	static std::unordered_map<char, LabyrinthCells> const LabyrinthCellsTable = {
 			{' ', LabyrinthCells::BLANK},
 			{'#', LabyrinthCells::WALL},
 			{'A', LabyrinthCells::START},
 			{'B', LabyrinthCells::END},
-			{'-', LabyrinthCells::PATH},
+			{'.', LabyrinthCells::PATH},
 	};
-
-	std::unordered_map<LabyrinthCells, char> const InvertLabyrinthCellsTable = {
+	static std::unordered_map<LabyrinthCells, char> const InvertLabyrinthCellsTable = {
 			{LabyrinthCells::BLANK, ' '},
 			{LabyrinthCells::WALL, '#'},
 			{LabyrinthCells::START, 'A'},
 			{LabyrinthCells::END, 'B'},
-			{LabyrinthCells::PATH, '-'},
+			{LabyrinthCells::PATH, '.'},
+	};
+	static std::unordered_map<std::string, SearchSettings> const SearchSettingsTable = {
+			{"mur", SearchSettings::MUR},
+			{"von-neumann", SearchSettings::VON_NEUMANN},
 	};
 }
 
-LabyrinthCells ToLabyrinthCellsEnum(int16_t labyrinthCell)
+LabyrinthCells ToLabyrinthCells(int16_t labyrinthCell)
 {
 	return static_cast<LabyrinthCells>(labyrinthCell);
 }
@@ -84,6 +106,198 @@ LabyrinthCells ToLabyrinthCellsEnum(int16_t labyrinthCell)
 int16_t ToInt(LabyrinthCells labyrinthCell)
 {
 	return static_cast<int8_t>(labyrinthCell);
+}
+
+void UpdateBorders(BordersLabyrinth& bordersLabyrinth, PositionCell const& cellPosition)
+{
+	if (bordersLabyrinth.left.colum > cellPosition.colum)
+	{
+		bordersLabyrinth.left = cellPosition;
+	}
+
+	if (bordersLabyrinth.bottom.row < cellPosition.row)
+	{
+		bordersLabyrinth.bottom = cellPosition;
+	}
+
+	if (bordersLabyrinth.right.colum < cellPosition.colum)
+	{
+		bordersLabyrinth.right = cellPosition;
+	}
+}
+
+PositionCell GetPositionFromLabyrinthOf(LabyrinthCells labyrinthCells, Labyrinth const& labyrinth)
+{
+	for (int16_t i = 0; i < labyrinth.size(); i++)
+	{
+		for (int16_t j = 0; j < labyrinth[i].size(); j++)
+		{
+			if (labyrinth[i][j] == ToInt(labyrinthCells)) return { i, j };
+		}
+	}
+
+	throw std::invalid_argument("Cell not found.");
+}
+
+bool IsStartPosition(int16_t cell)
+{
+	return cell == ToInt(LabyrinthCells::START);
+}
+
+bool IsEndPosition(int16_t cell)
+{
+	return cell == ToInt(LabyrinthCells::END);
+}
+
+void ValidateLabyrinth(Labyrinth const& labyrinth)
+{
+	std::vector<int16_t> tempVector;
+	for (auto& vectCell : labyrinth) tempVector.insert(tempVector.end(), vectCell.begin(), vectCell.end());
+
+	if (!boost::algorithm::one_of(tempVector.begin(), tempVector.end(), IsStartPosition))
+	{
+		throw std::out_of_range("The starting point is incorrect."); 
+	}
+
+	if (!boost::algorithm::one_of(tempVector.begin(), tempVector.end(), IsEndPosition))
+	{
+		throw std::out_of_range("The end point is incorrect.");
+	}
+}
+
+bool CheckPosition(PositionCell const& currentÑell, int16_t sizeOfWave, Labyrinth& labyrinth, std::vector<PositionCell> const& offcetCell)
+{
+	bool allMarked = true;
+
+	for (size_t vicinity = 0; vicinity < offcetCell.size(); ++vicinity)
+	{
+		size_t iy = currentÑell.row + offcetCell[vicinity].row;
+		size_t ix = currentÑell.colum + offcetCell[vicinity].colum;
+
+		if (iy >= 0 and iy < labyrinth.size() and
+			ix >= 0 and ix < labyrinth[0].size() and
+			(labyrinth[iy][ix] == ToInt(LabyrinthCells::BLANK) or
+				labyrinth[iy][ix] == ToInt(LabyrinthCells::END)))
+		{
+			allMarked = false;
+			labyrinth[iy][ix] = sizeOfWave + 1;
+		}
+	}
+	return allMarked ? false : true;
+}
+
+bool SpreadWaveInLabyrinth(Labyrinth& labyrinth, PositionCell start, PositionCell end, std::vector<PositionCell> const& offcetCell)
+{
+	labyrinth[start.row][start.colum] = 0;
+	int16_t wave = 0;
+	bool allMarked = false;
+
+	do
+	{
+		allMarked = true;
+		for (int16_t labyrinthRow = 0; labyrinthRow < labyrinth.size(); ++labyrinthRow)
+		{
+			for (int16_t labyrinthCol = 0; labyrinthCol < labyrinth[labyrinthRow].size(); ++labyrinthCol)
+			{
+				if (labyrinth[labyrinthRow][labyrinthCol] == wave)
+				{
+					if (CheckPosition({ labyrinthRow , labyrinthCol }, wave, labyrinth, offcetCell)) allMarked = false;
+				}
+			}
+		}
+		wave++;
+	} while (!allMarked and labyrinth[end.row][end.colum] == ToInt(LabyrinthCells::END));
+
+	return (labyrinth[end.row][end.colum] == ToInt(LabyrinthCells::END)) ? false : true;
+}
+
+Labyrinth SetShortestPathToLabyrinth(Labyrinth const& labyrinthWithoutPath, std::stack<PositionCell>& shortestPath)
+{
+	Labyrinth labyrinthWithPath = labyrinthWithoutPath;
+
+	shortestPath.pop();
+	while (!shortestPath.empty())
+	{
+		PositionCell positionCell = shortestPath.top();
+		labyrinthWithPath[positionCell.row][positionCell.colum] = ToInt(LabyrinthCells::PATH);
+		shortestPath.pop();
+	}
+	return labyrinthWithPath;
+}
+
+std::stack<PositionCell> GetFromLabyrinthShortestPath(
+	Labyrinth& labyrinthWithWaves, 
+	PositionCell const& startPosition, 
+	PositionCell const& endPosition, 
+	std::vector<PositionCell> const& offcetCell
+)
+{
+	std::stack<PositionCell> path;
+
+	size_t waveLength = labyrinthWithWaves[endPosition.row][endPosition.colum];
+	int16_t x = endPosition.colum;
+	int16_t y = endPosition.row;
+
+	while ((waveLength--) > 0)
+	{
+		for (size_t vicinity = 0; vicinity < offcetCell.size(); ++vicinity)
+		{
+			size_t iy = y + offcetCell[vicinity].row;
+			size_t ix = x + offcetCell[vicinity].colum;
+
+			if (iy >= 0 && iy < labyrinthWithWaves.size() &&
+				ix >= 0 && ix < labyrinthWithWaves[0].size() &&
+				labyrinthWithWaves[iy][ix] == waveLength)
+			{
+				y += offcetCell[vicinity].row;
+				x += offcetCell[vicinity].colum;
+				break;
+			}
+		}
+		path.push({ y,x });
+	}
+	return path;
+}
+
+Labyrinth GetLabyrinthWithShortestPathByPositions(
+	PositionCell const& startPosition, 
+	PositionCell const& endPosition, 
+	Labyrinth& labyrinthWithoutShortestPath, 
+	SearchSettings const& searchSettings
+)
+{
+	Labyrinth labyrinth = labyrinthWithoutShortestPath;
+	std::vector<PositionCell> offcetCell = (searchSettings == SearchSettings::VON_NEUMANN) ?
+		OFFCET_CELL_VON_NEUMANN : OFFCET_CELL_MUR;
+
+	if (!SpreadWaveInLabyrinth(labyrinth, startPosition, endPosition, offcetCell))
+	{
+		return labyrinthWithoutShortestPath;
+	}
+
+	std::stack<PositionCell> shortestPath = GetFromLabyrinthShortestPath(labyrinth, startPosition, endPosition, offcetCell);
+
+	return SetShortestPathToLabyrinth(labyrinthWithoutShortestPath, shortestPath);
+}
+
+Labyrinth FindingShortestPathInLabyrinth(Labyrinth& labyrinth, SearchSettings const& searchSettings)
+{
+	ValidateLabyrinth(labyrinth);
+
+	PositionCell start = GetPositionFromLabyrinthOf(LabyrinthCells::START, labyrinth);
+	PositionCell end = GetPositionFromLabyrinthOf(LabyrinthCells::END, labyrinth);
+
+	return GetLabyrinthWithShortestPathByPositions(start, end, labyrinth, searchSettings);
+}
+
+std::ofstream GetOutputFileStream(std::string const& filePath)
+{
+	std::ofstream file(filePath);
+	if (!file.is_open())
+	{
+		throw std::invalid_argument("Failed to open file for writing.");
+	}
+	return move(file);
 }
 
 std::ifstream GetInputFileStream(std::string const& filePath)
@@ -96,33 +310,17 @@ std::ifstream GetInputFileStream(std::string const& filePath)
 	return move(file);
 }
 
-void ArgumentsCountCheck(int argc)
+void WriteLabyrinthInFile(std::string const& filePath, Labyrinth& labyrinth)
 {
-	if (argc != 3)
-	{
-		std::cout << "Usage: labyrinth.exe <input file> <output file>" << std::endl
-			<< "\t<input file> - path to input file." << std::endl
-			<< "\t<output file> - path to output file." << std::endl;
+	std::ofstream file = GetOutputFileStream(filePath);
 
-		throw std::invalid_argument("Invalid arguments count.");
-	}
-}
-
-void UpdateBorders(BordersLabyrinth& bordersLabyrinth, PositionCell const& cellPosition)
-{
-	if (bordersLabyrinth.left.col > cellPosition.col)
+	for (auto& vectorOfCell : labyrinth)
 	{
-		bordersLabyrinth.left = cellPosition;
-	}
-
-	if (bordersLabyrinth.bottom.row < cellPosition.row)
-	{
-		bordersLabyrinth.bottom = cellPosition;
-	}
-
-	if (bordersLabyrinth.right.col < cellPosition.col)
-	{
-		bordersLabyrinth.right = cellPosition;
+		for (auto& labyrinthCell : vectorOfCell)
+		{
+			file << InvertLabyrinthCellsTable.find(ToLabyrinthCells(labyrinthCell))->second;
+		}
+		file << std::endl;
 	}
 }
 
@@ -169,11 +367,11 @@ BordersLabyrinth GetBordersOfLabyrinthFromFile(std::string const& filePath)
 LabyrintInfo GetLabyrinthInfoFromFile(std::string const& filePath)
 {
 	LabyrintInfo labyrinthInfo;
-	
+
 	labyrinthInfo.bordersLabyrinth = GetBordersOfLabyrinthFromFile(filePath);
 
 	labyrinthInfo.labyrinthSize.height = (labyrinthInfo.bordersLabyrinth.bottom.row - labyrinthInfo.bordersLabyrinth.top.row) + 1;
-	labyrinthInfo.labyrinthSize.width = (labyrinthInfo.bordersLabyrinth.right.col - labyrinthInfo.bordersLabyrinth.left.col) + 1;
+	labyrinthInfo.labyrinthSize.width = (labyrinthInfo.bordersLabyrinth.right.colum - labyrinthInfo.bordersLabyrinth.left.colum) + 1;
 
 	if ((labyrinthInfo.labyrinthSize.height > MAX_LABYRINTH_SIZE) or (labyrinthInfo.labyrinthSize.width > MAX_LABYRINTH_SIZE))
 	{
@@ -181,19 +379,49 @@ LabyrintInfo GetLabyrinthInfoFromFile(std::string const& filePath)
 	}
 
 	labyrinthInfo.labyrinthOffset.lengthTop = labyrinthInfo.bordersLabyrinth.top.row;
-	labyrinthInfo.labyrinthOffset.lengthLeft = labyrinthInfo.bordersLabyrinth.left.col;
+	labyrinthInfo.labyrinthOffset.lengthLeft = labyrinthInfo.bordersLabyrinth.left.colum;
 
 	return labyrinthInfo;
 }
 
-Labyrinth GetLabyrinthFromArgv(int argc, char* argv[])
+void ArgumentsCountCheck(int argc)
+{
+	if (argc != 3 and argc != 4)
+	{
+		std::cout << "Usage: labyrinth.exe <input file> <output file> <setting for search>" << std::endl
+			<< "\t<input file> - path to input file." << std::endl
+			<< "\t<output file> - path to output file." << std::endl
+			<< "\t(optional)<setting for search> - \"mur\" or \"von-neuman\". By default von-neuman search." << std::endl
+			<< "\t\tmur - orthogonal and diagonal search." << std::endl
+			<< "\t\tvon-neuman - only orthogonal search." << std::endl;
+
+		throw std::invalid_argument("Invalid arguments count.");
+	}
+}
+
+bool IsSearchSetting(std::string const& str)
+{
+	return (SearchSettingsTable.find(str) != SearchSettingsTable.end()) ? true : false;
+}
+
+void ValidateArguments(int argc, char* argv[])
 {
 	ArgumentsCountCheck(argc);
+	
+	if (argc == 4 and not IsSearchSetting(argv[3]))
+	{
+		throw std::invalid_argument("Search setting is not correct.");
+	}
+}
+
+Labyrinth GetLabyrinthFromArgv(int argc, char* argv[])
+{
+	ValidateArguments(argc, argv);
 
 	LabyrintInfo labyrinthInfo = GetLabyrinthInfoFromFile(argv[1]);
 
 	std::ifstream file = GetInputFileStream(argv[1]);
-	
+
 	Labyrinth labyrinth;
 
 	std::string fileLine;
@@ -232,234 +460,19 @@ Labyrinth GetLabyrinthFromArgv(int argc, char* argv[])
 	return labyrinth;
 }
 
-PositionCell GetPositionFromLabyrinthOf(LabyrinthCells labyrinthCells, Labyrinth const& labyrinth)
-{
-	for (int16_t i = 0; i < labyrinth.size(); i++)
-	{
-		for (int16_t j = 0; j < labyrinth[i].size(); j++)
-		{
-			if (labyrinth[i][j] == ToInt(labyrinthCells)) return { i, j };
-		}
-	}
-
-	throw std::invalid_argument("Cell not found.");
-}
-
-void ValidateLabyrinth(Labyrinth const& labyrinth)
-{
-
-}
-
-bool CheckAllPosition(
-	PositionCell currentÑell,
-	int16_t sizeOfWave,
-	Labyrinth& labyrinth,
-	std::vector<PositionCell> offcetCell
-)
-{
-	bool allMarked = true;
-
-	for (size_t vicinity = 0; vicinity < MUR_AREA; ++vicinity)
-	{
-		size_t iy = currentÑell.row + offcetCell[vicinity].row;
-		size_t ix = currentÑell.col + offcetCell[vicinity].col;
-
-		if (iy >= 0 and iy < labyrinth.size() and
-			ix >= 0 and ix < labyrinth[0].size() and
-			(labyrinth[iy][ix] == ToInt(LabyrinthCells::BLANK) or
-				labyrinth[iy][ix] == ToInt(LabyrinthCells::END)))
-		{
-			allMarked = false;
-			labyrinth[iy][ix] = sizeOfWave + 1;
-		}
-	}
-	return allMarked ? false : true;
-}
-
-bool CheackVonNeumannPositions(
-	PositionCell currentÑell,
-	int16_t sizeOfWave,
-	Labyrinth& labyrinth
-)
-{
-	std::vector<PositionCell> offcetCellVonNeumann = {
-		{0, 1},
-		{1, 0},
-		{0, -1},
-		{-1, 0} 
-	};
-
-	return CheckAllPosition(currentÑell, sizeOfWave, labyrinth, offcetCellVonNeumann);
-}
-
-bool CheackMurPositions(
-	PositionCell currentÑell,
-	int16_t sizeOfWave,
-	Labyrinth& labyrinth
-)
-{
-	std::vector<PositionCell> offcetCellMur = {
-		{0, 1},
-		{1, 0},
-		{0, -1},
-		{-1, 0},
-		{-1, -1},
-		{-1, 1},
-		{1, -1},
-		{1, 1}
-	};
-
-	return CheckAllPosition(currentÑell, sizeOfWave, labyrinth, offcetCellMur);
-}
-
-bool SpreadWaveInLabyrinth(
-	Labyrinth& labyrinth,
-	PositionCell start,
-	PositionCell end
-)
-{
-	labyrinth[start.row][start.col] = 0;
-	int16_t wave = 0;
-	bool allMarked;
-
-	do
-	{
-		allMarked = true;
-		for (int16_t labyrinthRow = 0; labyrinthRow < labyrinth.size(); ++labyrinthRow)
-		{
-			for (int16_t labyrinthCol = 0; labyrinthCol < labyrinth[labyrinthRow].size(); ++labyrinthCol)
-			{
-				if (labyrinth[labyrinthRow][labyrinthCol] == wave)
-				{
-					if (CheackMurPositions({ labyrinthRow, labyrinthCol }, wave, labyrinth)) allMarked = false;
-				}
-			}
-		}
-		wave++;
-	} while (!allMarked and labyrinth[end.row][end.col] == ToInt(LabyrinthCells::END));
-
-	return (labyrinth[end.row][end.col] == ToInt(LabyrinthCells::END)) ? false : true;
-}
-
-std::stack<PositionCell> GetShortestPathFromLabyrinth(
-	Labyrinth& labyrinthWithWaves, 
-	PositionCell startPosition, 
-	PositionCell endPosition
-)
-{
-	std::stack<PositionCell> path;
-
-	std::vector<PositionCell> offcetCellMur = {
-		{0, 1},
-		{1, 0},
-		{0, -1},
-		{-1, 0},
-		{-1, -1},
-		{-1, 1},
-		{1, -1},
-		{1, 1}
-	};
-
-	size_t waveLength = labyrinthWithWaves[endPosition.row][endPosition.col];
-	int16_t x = endPosition.col;
-	int16_t y = endPosition.row;
-
-	while ((waveLength--) > 0)
-	{
-		for (size_t vicinity = 0; vicinity < MUR_AREA; ++vicinity)
-		{
-			size_t iy = y + offcetCellMur[vicinity].row;
-			size_t ix = x + offcetCellMur[vicinity].col;
-
-			if (iy >= 0 && iy < labyrinthWithWaves.size() &&
-				ix >= 0 && ix < labyrinthWithWaves[0].size() &&
-				labyrinthWithWaves[iy][ix] == waveLength)
-			{
-				y += offcetCellMur[vicinity].row;
-				x += offcetCellMur[vicinity].col;
-				break;
-			}
-		}
-		path.push({ y,x });
-	}
-	return path;
-}
-
-Labyrinth SetShortestPathToLabyrinth(Labyrinth const& labyrinthWithoutPath, std::stack<PositionCell>& shortestPath)
-{
-	Labyrinth labyrinthWithPath = labyrinthWithoutPath;
-
-	shortestPath.pop();
-	while (!shortestPath.empty())
-	{
-		PositionCell positionCell = shortestPath.top();
-		labyrinthWithPath[positionCell.row][positionCell.col] = ToInt(LabyrinthCells::PATH);
-		shortestPath.pop();
-	}
-	return labyrinthWithPath;
-}
-
-Labyrinth GetLabyrinthWithShortestPathByPositions(
-	PositionCell startPosition,
-	PositionCell endPosition,
-	Labyrinth& labyrinthWithoutShortestPath
-)
-{
-	Labyrinth labyrinth = labyrinthWithoutShortestPath;
-
-	if (!SpreadWaveInLabyrinth(labyrinth, startPosition, endPosition))
-	{
-		return labyrinthWithoutShortestPath;
-	}
-
-	std::stack<PositionCell> shortestPath = GetShortestPathFromLabyrinth(labyrinth, startPosition, endPosition);
-
-	return SetShortestPathToLabyrinth(labyrinthWithoutShortestPath, shortestPath);
-}
-
-Labyrinth FindingShortestPathInLabyrinth(Labyrinth& labyrinth)
-{
-	ValidateLabyrinth(labyrinth);
-
-	PositionCell start = GetPositionFromLabyrinthOf(LabyrinthCells::START, labyrinth);
-	PositionCell end = GetPositionFromLabyrinthOf(LabyrinthCells::END, labyrinth);
-
-	return GetLabyrinthWithShortestPathByPositions(start, end, labyrinth);
-}
-
-std::ofstream GetOutputFileStream(std::string const& filePath)
-{
-	std::ofstream file(filePath);
-	if (!file.is_open())
-	{
-		throw std::invalid_argument("Failed to open file for reading.");
-	}
-	return move(file);
-}
-
-void WriteLabyrinthInFile(std::string const& filePath, Labyrinth& labyrinth)
-{
-	std::ofstream file = GetOutputFileStream(filePath);
-
-	for (auto& vectorOfCell : labyrinth)
-	{
-		for (auto& labyrinthCell : vectorOfCell)
-		{
-			file << InvertLabyrinthCellsTable.find(ToLabyrinthCellsEnum(labyrinthCell))->second;
-		}
-		file << std::endl;
-	}
-}
-
 int main(int argc, char* argv[])
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	
 	try
-	{
+	{	
 		Labyrinth labyrinth = GetLabyrinthFromArgv(argc, argv);
-		Labyrinth labyrinthWithShortestPath = FindingShortestPathInLabyrinth(labyrinth);
+
+		SearchSettings searchSettings = SearchSettings::VON_NEUMANN;
+		if (argc == 4) searchSettings = SearchSettingsTable.find(argv[3])->second;
+
+		Labyrinth labyrinthWithShortestPath = FindingShortestPathInLabyrinth(labyrinth, searchSettings);
 		WriteLabyrinthInFile(argv[2], labyrinthWithShortestPath);
 	}
 	catch (const std::exception& error)
