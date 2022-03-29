@@ -124,6 +124,9 @@
       <StackReserveSize>
       </StackReserveSize>
     </Link>
+    <PostBuildEvent>
+      <Command>auto_test.bat "$(TargetPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,6 +148,7 @@
     <ClCompile Include="Labyrinth.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="auto_test.bat" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

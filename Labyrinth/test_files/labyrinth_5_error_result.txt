@@ -1,0 +1,1 @@
+The readable labyrinth is too large. Use labyrinth size 100x100.

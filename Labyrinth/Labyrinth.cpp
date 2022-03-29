@@ -154,14 +154,10 @@ void ValidateLabyrinth(Labyrinth const& labyrinth)
 	std::vector<int16_t> tempVector;
 	for (auto& vectCell : labyrinth) tempVector.insert(tempVector.end(), vectCell.begin(), vectCell.end());
 
-	if (!boost::algorithm::one_of(tempVector.begin(), tempVector.end(), IsStartPosition))
+	if (!boost::algorithm::one_of(tempVector.begin(), tempVector.end(), IsEndPosition) or
+		!boost::algorithm::one_of(tempVector.begin(), tempVector.end(), IsStartPosition))
 	{
-		throw std::out_of_range("The starting point is incorrect."); 
-	}
-
-	if (!boost::algorithm::one_of(tempVector.begin(), tempVector.end(), IsEndPosition))
-	{
-		throw std::out_of_range("The end point is incorrect.");
+		throw std::out_of_range("The starting/end point is incorrect.");
 	}
 }
 
@@ -366,7 +362,7 @@ BordersLabyrinth GetBordersOfLabyrinthFromFile(std::string const& filePath)
 
 LabyrintInfo GetLabyrinthInfoFromFile(std::string const& filePath)
 {
-	LabyrintInfo labyrinthInfo;
+	LabyrintInfo labyrinthInfo{};
 
 	labyrinthInfo.bordersLabyrinth = GetBordersOfLabyrinthFromFile(filePath);
 
@@ -420,10 +416,14 @@ Labyrinth GetLabyrinthFromArgv(int argc, char* argv[])
 
 	LabyrintInfo labyrinthInfo = GetLabyrinthInfoFromFile(argv[1]);
 
+	if (labyrinthInfo.labyrinthSize.height == 1 and labyrinthInfo.labyrinthSize.width == 1)
+	{
+		throw std::length_error("There is no labyrinth in the file.");
+	}
+
 	std::ifstream file = GetInputFileStream(argv[1]);
 
 	Labyrinth labyrinth;
-
 	std::string fileLine;
 	size_t fileRow = 0;
 
@@ -448,13 +448,18 @@ Labyrinth GetLabyrinthFromArgv(int argc, char* argv[])
 				continue;
 			}
 
-			temp[fileCol++ - labyrinthInfo.labyrinthOffset.lengthLeft] = ToInt(LabyrinthCellsTable.find(labyrinthCell)->second);
+			if (fileCol < temp.size())
+			{
+				temp[fileCol - labyrinthInfo.labyrinthOffset.lengthLeft] = ToInt(LabyrinthCellsTable.find(labyrinthCell)->second);
+			}
 
+			fileCol++;
 		}
 
 		labyrinth.push_back(temp);
 		fileRow++;
 	}
+
 	file.close();
 
 	return labyrinth;
