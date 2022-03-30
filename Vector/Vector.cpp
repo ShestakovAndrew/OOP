@@ -42,9 +42,10 @@ void AddMeanPositiveNumberForAllElementsIn(RealNumbers& realNumbers)
 	});
 }
 
-void PrintRealNumbers(RealNumbers const& realNumbers)
+void PrintRealNumbers(RealNumbers& realNumbers)
 {
-	for (auto const& number : realNumbers)
+	std::sort(realNumbers.begin(), realNumbers.end());
+	for (auto& number : realNumbers)
 	{
 		std::cout << std::fixed << std::setprecision(SIMBOLS_AFTER_COMMA) << number << ' ';
 	}
@@ -63,11 +64,9 @@ int main(int argc, char* argv[])
 		AddMeanPositiveNumberForAllElementsIn(sequence);
 		PrintRealNumbers(sequence);
 	}
-	catch (const std::exception& error)
+	catch (const std::bad_cast& error)
 	{
 		std::cout << error.what() << std::endl;
 		return 1;
 	}
-
-
 }
