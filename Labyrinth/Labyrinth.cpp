@@ -62,7 +62,6 @@ namespace
 	};
 
 	using Labyrinth = std::vector<std::vector<int16_t>>;
-	using CheckFunction = std::function<bool(PositionCell const& positionCell, int16_t sizeOfWave, Labyrinth& labyrinth)>;
 
 	enum class LabyrinthCells
 	{
