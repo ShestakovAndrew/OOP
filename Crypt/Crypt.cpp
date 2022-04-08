@@ -28,7 +28,7 @@ namespace
 	};
 }
 
-bool isCryptionMethod(std::string const& str)
+bool IsCryptionMethod(std::string const& str)
 {
 	return (table.find(str) != table.end()) ? true : false;
 }
@@ -69,11 +69,11 @@ std::ofstream GetOpenFileForWrite(std::string const& filePath)
 	return move(file);
 }
 
-CryptData ValidateArguments(int argc, char* argv[])
+CryptData ValidateArguments(int argc, const char* argv[])
 {
 	ArgumentsCountCheck(argc);
 
-	if (!isCryptionMethod(argv[1]))
+	if (!IsCryptionMethod(argv[1]))
 	{
 		throw std::invalid_argument("Encryption/decryption instruction failed set.");
 	}
@@ -97,25 +97,22 @@ void CryptText(
 	std::ifstream& inputFile,
 	std::ofstream& outputFile,
 	uint8_t key,
-	CryptFunction const& cryptSymbol = CryptFunction())
+	CryptFunction const& cryptSymbol)
 {
 	char symbol;
 
 	while (inputFile.read(&symbol, 1))
 	{
-		if (cryptSymbol)
-		{
-			outputFile.put(cryptSymbol(symbol, key));
-		}
+		outputFile.put(cryptSymbol(symbol, key));
 	}
 }
 
 char MixingBitsInByte(char symbol)
 {
-	return ((symbol << 2) & 0b00011100) |
-		   ((symbol << 3) & 0b11000000) |
-		   ((symbol >> 5) & 0b00000011) |
-		   ((symbol >> 2) & 0b00100000);
+	return ((symbol << 3) & 0b11000000) |
+		   ((symbol >> 2) & 0b00100000) |
+		   ((symbol << 2) & 0b00011100) |
+		   ((symbol >> 5) & 0b00000011);
 }
 
 char InvertMixingBitsInByte(char symbol)
@@ -136,7 +133,7 @@ char DecryptSymbol(char symbol, uint8_t key)
 	return InvertMixingBitsInByte(symbol) ^ key;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
