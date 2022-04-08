@@ -11,10 +11,9 @@
 namespace
 {
 	const int8_t SIMBOLS_AFTER_COMMA = 3;
-	using RealNumbers = std::vector<double>;
 }
 
-void SetRealNumbersFromUserTo(RealNumbers& realNumbers)
+void SetRealNumbersTo(std::vector<double>& realNumbers)
 {
 	std::string lineFromUser;
 
@@ -29,20 +28,33 @@ void SetRealNumbersFromUserTo(RealNumbers& realNumbers)
 	}
 }
 
-void AddMeanPositiveNumberForAllElementsIn(RealNumbers& realNumbers)
+void AddMeanPositiveNumberForAllElementsIn(std::vector<double>& realNumbers)
 {
-	std::for_each(realNumbers.begin(), realNumbers.end(), [realNumbers](double& number)
-	{
-		double sum = 0;
-		std::for_each(realNumbers.begin(), realNumbers.end(),
-			[&sum](double number) { if (number > 0) sum += number; });
+	double numbersPositive—ount = 0, numbersPositiveSum = 0;
 
-		number += sum / double(std::count_if(realNumbers.begin(), realNumbers.end(), [](double number)
-			{return number > 0; }));
-	});
+	std::for_each(realNumbers.begin(), realNumbers.end(),
+		[&numbersPositive—ount, &numbersPositiveSum](double const& number)
+		{
+			if (number > 0)
+			{
+				numbersPositiveSum += number;
+				numbersPositive—ount++;
+			}
+		}
+	);
+
+	double arithmeticMeanOfPositiveNumbers = numbersPositiveSum / numbersPositive—ount;
+
+
+	std::for_each(realNumbers.begin(), realNumbers.end(),
+		[&arithmeticMeanOfPositiveNumbers](double& number)
+		{
+			number += arithmeticMeanOfPositiveNumbers;
+		}
+	);
 }
 
-void PrintRealNumbers(RealNumbers& realNumbers)
+void PrintRealNumbers(std::vector<double>& realNumbers)
 {
 	std::sort(realNumbers.begin(), realNumbers.end());
 	for (auto& number : realNumbers)
@@ -58,9 +70,8 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		RealNumbers sequence;
-
-		SetRealNumbersFromUserTo(sequence);
+		std::vector<double> sequence;
+		SetRealNumbersTo(sequence);
 		AddMeanPositiveNumberForAllElementsIn(sequence);
 		PrintRealNumbers(sequence);
 	}
