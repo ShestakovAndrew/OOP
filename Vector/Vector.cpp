@@ -1,12 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <windows.h>
-#include <iomanip>
-#include <string>
-#include <sstream>
-#include <algorithm>
-
-#include <boost/lexical_cast.hpp>
+#include "Vector.h"
 
 namespace
 {
@@ -21,7 +13,7 @@ void SetRealNumbersTo(std::vector<double>& realNumbers)
 	std::istringstream iss(lineFromUser);
 
 	std::string numberString;
-	 
+
 	while (iss >> numberString)
 	{
 		realNumbers.push_back(boost::lexical_cast<double>(numberString));
@@ -30,7 +22,9 @@ void SetRealNumbersTo(std::vector<double>& realNumbers)
 
 void AddMeanPositiveNumberForAllElementsIn(std::vector<double>& realNumbers)
 {
-	double numbersPositive—ount = 0, numbersPositiveSum = 0;
+	double numbersPositive—ount = 0;
+	double numbersPositiveSum = 0;
+	double arithmeticMeanOfPositiveNumbers = 0;
 
 	std::for_each(realNumbers.begin(), realNumbers.end(),
 		[&numbersPositive—ount, &numbersPositiveSum](double const& number)
@@ -43,8 +37,10 @@ void AddMeanPositiveNumberForAllElementsIn(std::vector<double>& realNumbers)
 		}
 	);
 
-	double arithmeticMeanOfPositiveNumbers = numbersPositiveSum / numbersPositive—ount;
-
+	if (numbersPositiveSum != 0)
+	{
+		arithmeticMeanOfPositiveNumbers = numbersPositiveSum / numbersPositive—ount;
+	}
 
 	std::for_each(realNumbers.begin(), realNumbers.end(),
 		[&arithmeticMeanOfPositiveNumbers](double& number)
@@ -60,24 +56,5 @@ void PrintRealNumbers(std::vector<double>& realNumbers)
 	for (auto& number : realNumbers)
 	{
 		std::cout << std::fixed << std::setprecision(SIMBOLS_AFTER_COMMA) << number << ' ';
-	}
-}
-
-int main(int argc, char* argv[])
-{
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
-
-	try
-	{
-		std::vector<double> sequence;
-		SetRealNumbersTo(sequence);
-		AddMeanPositiveNumberForAllElementsIn(sequence);
-		PrintRealNumbers(sequence);
-	}
-	catch (const std::bad_cast& error)
-	{
-		std::cout << error.what() << std::endl;
-		return 1;
 	}
 }
