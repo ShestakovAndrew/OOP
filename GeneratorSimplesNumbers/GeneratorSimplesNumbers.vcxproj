@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{ed4f394b-8311-4d5f-8d9e-ff15b8a853c7}</ProjectGuid>
-    <RootNamespace>GeneratorNumbers</RootNamespace>
+    <RootNamespace>GeneratorSimplesNumbers</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>GeneratorSimplesNumbers</ProjectName>
   </PropertyGroup>
@@ -140,6 +140,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GeneratorSimplesNumbers.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratorSimplesNumbers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeneratorSimplesNumbersTest\GeneratorSimplesNumbersTest.vcxproj">
+      <Project>{7ae8e99e-c97e-493b-8796-59f9334c0353}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
