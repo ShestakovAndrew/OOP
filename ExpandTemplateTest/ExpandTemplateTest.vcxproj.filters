@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="ExpandTemplateTest.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ExpandTemplate.cpp">
+    <ClCompile Include="..\ExpandTemplate\ExpandTemplate.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExpandTemplate.h">
+    <ClInclude Include="..\ExpandTemplate\ExpandTemplate.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
