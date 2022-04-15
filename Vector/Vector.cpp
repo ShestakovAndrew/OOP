@@ -20,12 +20,8 @@ void SetRealNumbersTo(std::vector<double>& realNumbers)
 	}
 }
 
-void AddMeanPositiveNumberForAllElementsIn(std::vector<double>& realNumbers)
+void GetSumAndCountPositiveNumbers(std::vector<double> const& realNumbers, double& numbersPositive—ount, double& numbersPositiveSum)
 {
-	double numbersPositive—ount = 0;
-	double numbersPositiveSum = 0;
-	double arithmeticMeanOfPositiveNumbers = 0;
-
 	std::for_each(realNumbers.begin(), realNumbers.end(),
 		[&numbersPositive—ount, &numbersPositiveSum](double const& number)
 		{
@@ -36,23 +32,36 @@ void AddMeanPositiveNumberForAllElementsIn(std::vector<double>& realNumbers)
 			}
 		}
 	);
+}
 
-	if (numbersPositiveSum != 0)
-	{
-		arithmeticMeanOfPositiveNumbers = numbersPositiveSum / numbersPositive—ount;
-	}
-
+void AddNumberForAllElementsIn(std::vector<double>& realNumbers, double& numbersPositive—ount)
+{
 	std::for_each(realNumbers.begin(), realNumbers.end(),
-		[&arithmeticMeanOfPositiveNumbers](double& number)
+		[&numbersPositive—ount](double& number)
 		{
-			number += arithmeticMeanOfPositiveNumbers;
+			number += numbersPositive—ount;
 		}
 	);
 }
 
+void AddAveragePositiveNumberForAllElementsIn(std::vector<double>& realNumbers)
+{
+	double numbersPositive—ount = 0;
+	double numbersPositiveSum = 0;
+	double numbersPositiveAverage = 0;
+
+	GetSumAndCountPositiveNumbers(realNumbers, numbersPositive—ount, numbersPositiveSum);
+
+	if (numbersPositive—ount != 0)
+	{
+		numbersPositiveAverage = numbersPositiveSum / numbersPositive—ount;
+	}
+
+	AddNumberForAllElementsIn(realNumbers, numbersPositiveAverage);
+}
+
 void PrintRealNumbers(std::vector<double>& realNumbers)
 {
-	std::sort(realNumbers.begin(), realNumbers.end());
 	for (auto& number : realNumbers)
 	{
 		std::cout << std::fixed << std::setprecision(SIMBOLS_AFTER_COMMA) << number << ' ';

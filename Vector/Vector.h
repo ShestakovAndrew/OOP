@@ -11,6 +11,10 @@
 
 void SetRealNumbersTo(std::vector<double>& realNumbers);
 
-void AddMeanPositiveNumberForAllElementsIn(std::vector<double>& realNumbers);
+void GetSumAndCountPositiveNumbers(std::vector<double> const& realNumbers, double& numbersPositive—ount, double& numbersPositiveSum);
+
+void AddNumberForAllElementsIn(std::vector<double>& realNumbers, double& numbersPositive—ount);
+
+void AddAveragePositiveNumberForAllElementsIn(std::vector<double>& realNumbers);
 
 void PrintRealNumbers(std::vector<double>& realNumbers);

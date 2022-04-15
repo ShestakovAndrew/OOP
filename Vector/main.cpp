@@ -9,10 +9,11 @@ int main(int argc, char* argv[])
 	{
 		std::vector<double> sequence;
 		SetRealNumbersTo(sequence);
-		AddMeanPositiveNumberForAllElementsIn(sequence);
+		AddAveragePositiveNumberForAllElementsIn(sequence);
+		std::sort(sequence.begin(), sequence.end());
 		PrintRealNumbers(sequence);
 	}
-	catch (const std::bad_cast& error)
+	catch (const std::exception& error)
 	{
 		std::cout << error.what() << std::endl;
 		return 1;
