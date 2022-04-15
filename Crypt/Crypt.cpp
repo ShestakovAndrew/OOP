@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <functional>
+#include <unordered_map>
 #include <windows.h>
 
 namespace
