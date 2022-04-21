@@ -1,16 +1,19 @@
 #include "URLParser.h"
 
-const std::string PROTOCOL_REGEX = R"((?:(https?|ftp):\/\/)?)";
-const std::string HOST_REGEX = R"(([^:\s\/\\?#]+))";
-const std::string PORT_REGEX = R"((?::(\d+))?)";
-const std::string DOC_REGEX = R"((?:\/((?:[^:\/\\]+\/?)*))?)";
+namespace
+{
+	const std::string PROTOCOL_REGEX = R"((?:(http|https|ftp):\/\/)?)";
+	const std::string HOST_REGEX = R"(([^:\s\/\\?#]+))";
+	const std::string PORT_REGEX = R"((?::(\d+))?)";
+	const std::string DOC_REGEX = R"((?:\/((?:[^:\/\\]+\/?)*))?)";
 
-const uint16_t DEFAULT_HTTP_PORT = 80;
-const uint16_t DEFAULT_HTTPS_PORT = 443;
-const uint16_t DEFAULT_FTP_PORT = 21;
+	const uint16_t DEFAULT_HTTP_PORT = 80;
+	const uint16_t DEFAULT_HTTPS_PORT = 443;
+	const uint16_t DEFAULT_FTP_PORT = 21;
 
-const uint16_t MIN_PORT = 1;
-const uint16_t MAX_PORT = 65535;
+	const uint16_t MIN_PORT = 1;
+	const uint16_t MAX_PORT = 65535;
+}
 
 bool ParseURL(std::string const& url, Protocol& protocol, uint16_t& port, std::string& host, std::string& document)
 {
