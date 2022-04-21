@@ -67,7 +67,7 @@ TEST_CASE("Handle command Info must return car status")
 TEST_CASE("Handle command SetSpeed must return behavior")
 {
 	CCar car;
-	VerifyCommandHandling("SetSpeed 10", "Car has not been turned on.\n", car);
+	VerifyCommandHandling("SetSpeed 10", "Speed has not been changed.\n", car);
 
 	car.TurnOnEngine();
 	VerifyCommandHandling("SetSpeed 10", "Speed has not been changed.\n", car);
@@ -80,8 +80,7 @@ TEST_CASE("Handle command SetSpeed must return behavior")
 TEST_CASE("Handle command SetGear must return behavior")
 {
 	CCar car;
-	VerifyCommandHandling("SetGear 1", "Car has not been turned on.\n", car);
-
+	VerifyCommandHandling("SetGear -1", "Gear has not been changed.\n", car);
 	car.TurnOnEngine();
 	VerifyCommandHandling("SetGear 4", "Gear has not been changed.\n", car);
 

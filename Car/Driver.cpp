@@ -109,12 +109,6 @@ void CDriver::EngineOff(std::istream& input)
 
 void CDriver::SetGear(std::istream& input)
 {
-	if (!m_car.IsTurnedOn())
-	{
-		m_output << "Car has not been turned on." << std::endl;
-		return;
-	}
-
 	int gear;
 	input >> gear;
 
@@ -129,16 +123,10 @@ void CDriver::SetGear(std::istream& input)
 
 void CDriver::SetSpeed(std::istream& input)
 {
-	if (!m_car.IsTurnedOn())
-	{
-		m_output << "Car has not been turned on." << std::endl;
-		return;
-	}
-
 	int speed;
 	input >> speed;
 
-	if (!m_car.SetSpeed(speed))
+	if (!m_car.SetSpeed(speed)) 
 	{
 		m_output << "Speed has not been changed." << std::endl;
 		return;

@@ -53,7 +53,7 @@ namespace
 		return (gear == Gear::REVERSE) or (speed < 0);
 	}
 
-	bool CanChangeSpeedInNeutralGear(Gear const& gear, int speed, int m_speed)
+	bool CanChangeSpeedIfNeutralGear(Gear const& gear, int speed, int m_speed)
 	{
 		return (gear != Gear::NEUTRAL) or ((gear == Gear::NEUTRAL) and (speed < m_speed));
 	}
@@ -114,7 +114,10 @@ bool CCar::SetGear(Gear const& gear)
 
 bool CCar::SetSpeed(int speed)
 {
-	if (SpeedInRange(m_gear, speed) and CanChangeSpeedInNeutralGear(m_gear, speed, GetSpeed()))
+	if (m_turnedOn and
+		SpeedInRange(m_gear, speed) and 
+		CanChangeSpeedIfNeutralGear(m_gear, speed, GetSpeed())
+	)
 	{
 		m_speed = ÑarMovingBackward(m_gear, m_speed) ? -speed : speed;
 		return true;

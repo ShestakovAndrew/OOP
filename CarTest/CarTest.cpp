@@ -81,9 +81,9 @@ TEST_CASE("TestEngineOnOff")
 		REQUIRE(someCar.IsTurnedOn());
 	}
 	
-	SECTION("Engine should be off") 
+	SECTION("Engine should be off if this posible")
 	{
-		REQUIRE(someCar.TurnOffEngine()); //можно выключить сразу после включения 
+		REQUIRE(someCar.TurnOffEngine()); 
 		someCar.TurnOnEngine();
 		someCar.SetGear(Gear::FIRST);
 		REQUIRE(someCar.SetSpeed(1));
@@ -103,9 +103,16 @@ TEST_CASE("TestGearShift")
 	CCar car;
 	car.TurnOnEngine();
 
+	SECTION("Switching gear if engine turn off")
+	{
+		car.TurnOffEngine();
+		TestCarCanSetGear(car, Gear::NEUTRAL);
+	}
+
 	// проверка переключений передачи при увеличении скорости
 	WHEN("Switching gear at increase in speed")
 	{
+		car.TurnOnEngine();
 		REQUIRE(car.SetGear(Gear::FIRST));
 
 		for (int speed = 0; speed <= 150; speed += 1)
