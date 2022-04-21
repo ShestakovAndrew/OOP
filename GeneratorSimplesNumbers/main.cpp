@@ -7,9 +7,9 @@ int main(int argc, const char* argv[])
 
 	try
 	{
-		uint64_t uppedBound = GetUpperBound(argc, argv);
+		int uppedBound = GetUpperBound(argc, argv);
 
-		std::set<uint64_t> primeNumbers = GeneratePrimeNumbersSet(uppedBound);
+		std::set<size_t> primeNumbers = GeneratePrimeNumbersSet(uppedBound);
 
 		DisplayPrimeNumbers(primeNumbers);
 	}

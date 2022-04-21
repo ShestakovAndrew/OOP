@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <Windows.h>
 
-std::set<uint64_t> GeneratePrimeNumbersSet(size_t const& upperBound);
+std::set<size_t> GeneratePrimeNumbersSet(int upperBound);
 
-uint64_t GetUpperBound(int argc, const char* argv[]);
+int GetUpperBound(int argc, const char* argv[]);
 
 void CheckArguments(int argc, const char* argv[]);
 
-void DisplayPrimeNumbers(std::set<uint64_t> const& primeNumbers);
+void DisplayPrimeNumbers(std::set<size_t> const& primeNumbers);

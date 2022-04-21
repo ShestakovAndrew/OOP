@@ -2,34 +2,48 @@
 
 namespace
 {
-	static const size_t MAX_RANGE = 100'000'000;
+	static const int64_t MAX_RANGE = 100'000'000;
 }
 
-std::set<uint64_t> GeneratePrimeNumbersSet(size_t const& upperBound)
+std::vector<bool> SelectPrimeNumbers(size_t upperBound)
 {
-	std::set<uint64_t> primeNumbers;
+	std::vector<bool> isPrime(upperBound + 1, true);
 
-	if (upperBound < 2) return primeNumbers;
-
-	std::vector<bool> primes(upperBound + 1, true);
-	primes[0] = false;
-
-	for (size_t i = 2; i * i <= upperBound; ++i)
+	for (size_t i = 2; i * i <= upperBound; i++)
 	{
-		if (primes[i])
+		if (isPrime[i])
 		{
-			for (size_t j = i * i; j <= upperBound; j += 2 * i)
+			for (size_t j = i * i; j <= upperBound; j += i)
 			{
-				primes[j] = false;
+				isPrime[j] = false;
 			}
 		}
 	}
 
-	for (size_t i = 1; i <= upperBound; i += 2)
+	return isPrime;
+}
+
+std::set<size_t> GenerateSet(std::vector<bool> const& numbers)
+{
+	std::set<size_t> selectedNumbers;
+
+	for (size_t i = 2; i < numbers.size(); i++)
 	{
-		if (primes[i]) primeNumbers.insert(i);
+		if (numbers[i]) selectedNumbers.insert(i);
 	}
-	return primeNumbers;
+
+	return selectedNumbers;
+}
+
+std::set<size_t> GeneratePrimeNumbersSet(int upperBound)
+{
+	std::set<size_t> setOfPrime = {};
+
+	if (upperBound < 2) return setOfPrime;
+
+	std::vector<bool> selectedPrimes = SelectPrimeNumbers(upperBound);
+
+	return GenerateSet(selectedPrimes);
 }
 
 void CheckArguments(int argc, const char* argv[])
@@ -47,19 +61,19 @@ void CheckArguments(int argc, const char* argv[])
 	}
 }
 
-void DisplayPrimeNumbers(std::set<uint64_t> const& primeNumbers)
+void DisplayPrimeNumbers(std::set<size_t> const& primeNumbers)
 {
 	for (auto it = primeNumbers.cbegin(); it != primeNumbers.cend(); ++it)
 	{
-		std::cout << *it << ' ';
+		std::cout << *it + 1 << ' ';
 	}
 }
 
-uint64_t GetUpperBound(int argc, const char* argv[])
+int GetUpperBound(int argc, const char* argv[])
 {
 	CheckArguments(argc, argv);
 
-	uint64_t upperBound = std::stoi(argv[1]);
+	int upperBound = std::atoi(argv[1]);
 
 	if (!upperBound) throw std::invalid_argument("Invalid parameter set.");
 
