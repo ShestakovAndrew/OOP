@@ -4,19 +4,25 @@ namespace
 {
 	static const std::unordered_map<Direction, std::string> DIRECTION_TABLE =
 	{
-		{ Direction::BACK, "reverse" },
+		{ Direction::BACK, "back" },
 		{ Direction::STILL, "still" },
 		{ Direction::FORWARD, "forward" }
+	};
+
+	static const std::unordered_map<Gear, std::string> GEAR_TABLE =
+	{
+		{ Gear::REVERSE, "reverse" },
+		{ Gear::NEUTRAL, "neutral" },
+		{ Gear::FIRST, "first" },
+		{ Gear::SECOND, "second" },
+		{ Gear::THIRD, "third" },
+		{ Gear::FOURTH, "fourth" },
+		{ Gear::FIFTH, "fifth" }
 	};
 
 	Gear IntToGear(int gear)
 	{
 		return static_cast<Gear>(gear);
-	}
-
-	int GearToInt(Gear gear)
-	{
-		return static_cast<int>(gear);
 	}
 }
 
@@ -31,7 +37,6 @@ CDriver::CDriver(CCar& car, std::istream& input, std::ostream& output)
 		{ "SetSpeed", bind(&CDriver::SetSpeed, this, std::placeholders::_1) } 
 	})
 {
-
 }
 
 bool CDriver::HandleCommand()
@@ -53,68 +58,61 @@ bool CDriver::HandleCommand()
 	return false;
 }
 
-bool CDriver::Info(std::istream& input)
+void CDriver::Info(std::istream& input)
 {
 	std::string carCondition = m_car.IsTurnedOn() ? "on" : "off";
 
-	try
-	{
-		m_output << "Car is turned " + carCondition << std::endl;
-		m_output << "Direction is " << (DIRECTION_TABLE.find(m_car.GetDirection())->second) << std::endl;
-		m_output << "Speed is " << m_car.GetSpeed() << std::endl;
-		m_output << "Condition of gear box is " << GearToInt(m_car.GetGear()) << std::endl;
-	}
-	catch (const std::exception&)
-	{
-		return false;
-	}
-
-	return true;
+	m_output << "Car is turned " + carCondition << std::endl;
+	m_output << "Direction is " << (DIRECTION_TABLE.find(m_car.GetDirection())->second) << std::endl;
+	m_output << "Speed is " << m_car.GetSpeed() << std::endl;
+	m_output << "Gear is " << (GEAR_TABLE.find(m_car.GetGear())->second) << std::endl;
 }
 
-bool CDriver::EngineOn(std::istream& input)
+void CDriver::EngineOn(std::istream& input)
 {
-	if (!m_car.TurnOnEngine())
-	{
-		m_output << "Car is already turned on." << std::endl;
-	}
-	else
+	if (!m_car.IsTurnedOn() and m_car.TurnOnEngine())
 	{
 		m_output << "Car has been turned on." << std::endl;
 	}
-
-	return true;
+	else
+	{
+		m_output << "Car is already turned on." << std::endl;
+	}
 }
 
-bool CDriver::EngineOff(std::istream& input)
+void CDriver::EngineOff(std::istream& input)
 {
-	if ((m_car.GetGear() != Gear::NEUTRAL) or (m_car.GetSpeed() != 0))
+	if (m_car.IsTurnedOn())
 	{
-		m_output << "Car has not been turned off." << std::endl;
+		if ((m_car.GetGear() != Gear::NEUTRAL) or (m_car.GetSpeed() != 0))
+		{
+			m_output << "Car has not been turned off." << std::endl;
+		}
+		else if (m_car.TurnOffEngine())
+		{
+			m_output << "Car has been turned off." << std::endl;
+		}
+		else
+		{
+			m_output << "Unknown command." << std::endl;
+		}
 	}
-	else if (m_car.TurnOffEngine())
-	{
-		m_output << "Car has been turned off." << std::endl;
-	}
-	else if (!m_car.TurnOffEngine())
+	else if (!m_car.IsTurnedOn())
 	{
 		m_output << "Car is already turned off." << std::endl;
 	}
 	else
 	{
 		m_output << "Unknown command." << std::endl;
-		return false;
 	}
-
-	return true;
 }
 
-bool CDriver::SetGear(std::istream& input)
+void CDriver::SetGear(std::istream& input)
 {
 	if (!m_car.IsTurnedOn())
 	{
 		m_output << "Car has not been turned on." << std::endl;
-		return false;
+		return;
 	}
 
 	int gear;
@@ -122,20 +120,19 @@ bool CDriver::SetGear(std::istream& input)
 
 	if (!m_car.SetGear(IntToGear(gear)))
 	{
-		m_output << "Condition of gear box has not been changed." << std::endl;
-		return false;
+		m_output << "Gear has not been changed." << std::endl;
+		return;
 	}
-	m_output << "Condition of gear box has been changed." << std::endl;
 
-	return true;
+	m_output << "Gear has been changed." << std::endl;
 }
 
-bool CDriver::SetSpeed(std::istream& input)
+void CDriver::SetSpeed(std::istream& input)
 {
 	if (!m_car.IsTurnedOn())
 	{
 		m_output << "Car has not been turned on." << std::endl;
-		return false;
+		return;
 	}
 
 	int speed;
@@ -144,9 +141,8 @@ bool CDriver::SetSpeed(std::istream& input)
 	if (!m_car.SetSpeed(speed))
 	{
 		m_output << "Speed has not been changed." << std::endl;
-		return false;
+		return;
 	}
-	m_output << "Speed has been changed." << std::endl;
 
-	return true;
+	m_output << "Speed has been changed." << std::endl;
 }
