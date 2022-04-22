@@ -11,34 +11,30 @@ namespace
 	};
 }
 
-std::string FindAndReplace(std::string const& subject, std::string const& search, std::string  const& replace)
+
+void FindAndReplace(std::string& subject, std::string const& search, std::string const& replace)
 {
-	std::string result;
+	size_t foundPosition = 0;
 
-	if (search.empty()) result = subject;
-
-	size_t position = 0;
-	while (position < subject.size())
+	while ((foundPosition = subject.find(search, foundPosition)) != std::string::npos)
 	{
-		size_t foundPosition = subject.find(search, position);
-		result.append(subject, position, (foundPosition - position));
-		if (foundPosition != std::string::npos)
-		{
-			result.append(replace);
-			position = foundPosition + search.size();
-		}
-		else break;
+		subject.replace(
+			subject.begin() + foundPosition, 
+			subject.begin() + foundPosition + search.size(), 
+			replace
+		);
 	}
-	return result;
 }
 
 std::string HtmlDecode(std::string const& html)
 {
 	std::string result = html;
+
 	for (auto const& htmlEntity : HTML_TABLE)
 	{
-		result = FindAndReplace(result, htmlEntity.first, htmlEntity.second);
+		FindAndReplace(result, htmlEntity.first, htmlEntity.second);
 	}
+
 	return result;
 }
 
