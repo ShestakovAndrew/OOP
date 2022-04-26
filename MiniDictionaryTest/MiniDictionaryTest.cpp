@@ -1,92 +1,101 @@
-#define BOOST_TEST_MAIN
 #define CATCH_CONFIG_MAIN
-
 #include <catch.hpp>
 #include "MiniDictionary/MiniDictionary.h"
 
-#include <boost/test/tools/output_test_stream.hpp>
-#include <boost/test/unit_test.hpp>
-
-namespace
+TEST_CASE("Should be returned translation of the words")
 {
-	struct cout_redirect
-	{
-		cout_redirect(std::streambuf* new_buffer)
-			: old(std::cout.rdbuf(new_buffer))
-		{ }
-
-		~cout_redirect()
-		{
-			std::cout.rdbuf(old);
-		}
-
-	private:
-		std::streambuf* old;
+	Dictionary dictionary = {
+		{ "cat", { "кот", "кошка" } },
+		{ "ball", { "м€ч" } }
 	};
+
+	REQUIRE(GetWordTranslations(dictionary, "cat") == WordTranslations{ "кот", "кошка" });
+	REQUIRE(GetWordTranslations(dictionary, "ball") == WordTranslations{ "м€ч" });
+	REQUIRE(GetWordTranslations(dictionary, "meat") == WordTranslations{});
 }
 
-TEST_CASE("FindWordInDictionary function")
+TEST_CASE("Should be returned translation of the phrases")
 {
-	SECTION("Find word in dictionary and get translation.")
-	{
-		boost::test_tools::output_test_stream output;
-		{
-			cout_redirect guard(output.rdbuf());
-			std::multimap<std::string, std::string> dictionary;
-			dictionary.insert(std::pair<std::string, std::string >("walk", "ходить"));
-			const std::string userString = "walk";
-			std::string userTranslation = "ходить";
-			bool isDictionaryChanged = false;
-			FindWordInDictionary(dictionary, userString, userTranslation, isDictionaryChanged);
-		}
+	Dictionary dictionary = {
+		{ "great day", { "хороший день", "прекрасный день" } },
+		{ "the red square", { " расна€ ѕлощадь" } }
+	};
 
-		REQUIRE(output.is_equal("ходить \n"));
-	}
+	REQUIRE(GetWordTranslations(dictionary, "great day") == WordTranslations{ "хороший день", "прекрасный день" });
+	REQUIRE(GetWordTranslations(dictionary, "The Red Square") == WordTranslations{ " расна€ ѕлощадь" });
+}
 
-	SECTION("Without word in dictionary.")
-	{
-		boost::test_tools::output_test_stream output;
-		{
-			cout_redirect guard(output.rdbuf());
-			std::multimap<std::string, std::string> dictionary;
-			dictionary.insert(std::pair<std::string, std::string>("celebrate", "праздновать"));
-			const std::string userString = "rage";
-			std::string userTranslation = "злитьс€";
-			bool isDictionaryChanged = false;
-			FindWordInDictionary(dictionary, userString, userTranslation, isDictionaryChanged);
-		}
-		REQUIRE(output.is_equal("Ќеизвестное слово 'rage'. ¬ведите перевод или пустую строку дл€ отказа.\n—лово 'rage' проигнорировано.\n"));
-	}
+TEST_CASE("Should be returned translation of the phrases or words in any case")
+{
+	Dictionary dictionary = {
+		{ "cat", { "кќт", "кќш ј" } },
+		{ "ball", { "м€ч" } },
+		{ "great day", { "хороший ƒ≈Ќ№", "прекрасный ƒ≈Ќ№" } },
+		{ "the red square", { " расна€ ѕлощадь" } }
+	};
 
-	SECTION("Translate phrases.")
-	{
-		boost::test_tools::output_test_stream output;
-		{
-			cout_redirect guard(output.rdbuf());
-			std::multimap<std::string, std::string> dictionary;
-			dictionary.insert(std::pair<std::string, std::string>("good day", "хороший день"));
-			const std::string userString = "good day";
-			std::string userTranslation = "хороший день";
-			bool isDictionaryChanged = false;
-			FindWordInDictionary(dictionary, userString, userTranslation, isDictionaryChanged);
-		}
-		REQUIRE(output.is_equal("хороший день \n"));
-	}
+	REQUIRE(GetWordTranslations(dictionary, "ThE ReD SqUaRe") == WordTranslations{ " расна€ ѕлощадь" });
+	REQUIRE(GetWordTranslations(dictionary, "BALL") == WordTranslations{ "м€ч" });
 
-	SECTION("Multy-translations.")
+	SECTION("Should be returned translation of the phrases or words in any case without losing the translation case")
 	{
-		boost::test_tools::output_test_stream output;
-		{
-			cout_redirect guard(output.rdbuf());
-			std::multimap<std::string, std::string> dictionary;
-			dictionary.insert(std::pair<std::string, std::string>("cat", "кошка"));
-			dictionary.insert(std::pair<std::string, std::string>("cat", "кот"));
-			const std::string userString = "cat";
-			std::string userTranslation = "кошка";
-			bool isDictionaryChanged = false;
-			FindWordInDictionary(dictionary, userString, userTranslation, isDictionaryChanged);
-		}
-		REQUIRE(output.is_equal("кошка кот \n"));
+		REQUIRE(GetWordTranslations(dictionary, "GrEaT DaY") == WordTranslations{ "хороший ƒ≈Ќ№", "прекрасный ƒ≈Ќ№" });
+		REQUIRE(GetWordTranslations(dictionary, "CaT") == WordTranslations{ "кќт", "кќш ј" });
 	}
+}
+
+TEST_CASE("Should be returned reverse translation of the phrases or words")
+{
+	Dictionary dictionary = {
+		{ "cat", { "кот", "кошка" } },
+		{ "ball", { "м€ч" } },
+		{ "great day", { "хороший день", "прекрасный день" } },
+		{ "the red square", { " расна€ ѕлощадь" } }
+	};
+
+	REQUIRE(GetWordTranslations(dictionary, "хороший день") == WordTranslations{ "great day" });
+	REQUIRE(GetWordTranslations(dictionary, "прекрасный день") == WordTranslations{ "great day" });
+	REQUIRE(GetWordTranslations(dictionary, "кот") == WordTranslations{ "cat" });
+	REQUIRE(GetWordTranslations(dictionary, "кошка") == WordTranslations{ "cat" });
+	REQUIRE(GetWordTranslations(dictionary, "м€ч") == WordTranslations{ "ball" });
+
+	SECTION("Should be returned reverse translation of the phrases or words in any case")
+	{
+		dictionary = {
+		{ "cat", { "кот", "кошка" } },
+		{ "ball", { "м€ч" } },
+		{ "great day", { "хороший день", "прекрасный день" } },
+		{ "the red square", { " расна€ ѕлощадь" } }
+		};
+
+		REQUIRE(GetWordTranslations(dictionary, "’о–оЎи… ƒеЌь") == WordTranslations{ "great day" });
+		REQUIRE(GetWordTranslations(dictionary, "п–е рјсЌы… ƒеЌь") == WordTranslations{ "great day" });
+		REQUIRE(GetWordTranslations(dictionary, " ќ“") == WordTranslations{ "cat" });
+		REQUIRE(GetWordTranslations(dictionary, " ќЎ ј") == WordTranslations{ "cat" });
+		REQUIRE(GetWordTranslations(dictionary, "мяч") == WordTranslations{ "ball" });
+	}
+}
+
+TEST_CASE("should be correctly add new words and phrases to the dictionary")
+{
+	Dictionary dictionary = {
+		{ "cat", { "кот" } },
+		{ "ball", { "м€ч" } },
+		{ "the red square", { " расна€ ѕлощадь" } }
+	};
+
+	AddTranslationInDictionary("кошка", "cat", dictionary);
+	AddTranslationInDictionary("evil cat", "кошјрј", dictionary);
+	AddTranslationInDictionary("meet", "м€со", dictionary);
+
+	Dictionary requiredDictionary = {
+		{ "cat", { "кот", "кошка" }},
+		{ "evil cat", { "кошјрј" }},
+		{ "ball", { "м€ч" } },
+		{ "meet", { "м€со" } },
+		{ "the red square", { " расна€ ѕлощадь" } },
+	};
+
+	REQUIRE(dictionary == requiredDictionary);
 }
 

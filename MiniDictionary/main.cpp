@@ -9,13 +9,7 @@ int main(int argc, char* argv[])
 	{
 		std::string dictionaryFilePath = GetDictionaryFilePathFromArgv(argc, argv);
 		Dictionary dictionary = ReadDictionaryFromFile(dictionaryFilePath);
-
-		std::string userString;
-		if (StartDialogWithUser(dictionary))
-		{
-			std::getline(std::cin, userString);
-			CheckForSavingChanges(dictionary, dictionaryFilePath, userString);
-		}
+		StartDialogWithUser(dictionary, dictionaryFilePath);
 	}
 	catch (const std::exception& err)
 	{

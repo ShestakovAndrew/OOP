@@ -1,32 +1,28 @@
 #pragma once
 #include <iostream>
 #include <Windows.h>
-#include <sstream>
 #include <fstream>
 #include <map>
-#include <unordered_map>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 #include <boost/algorithm/string.hpp>
 
-namespace
-{
-	using Dictionary = std::multimap<std::string, std::string>;
-	static const std::string EXIT = "...";
-}
+using WordTranslations = std::vector<std::string>;
+using Dictionary = std::map<std::string, WordTranslations>;
+static const std::string EXIT = "...";
 
 void ArgumentsCountCheck(int argc);
-
 std::string GetDictionaryFilePathFromArgv(int argc, char* argv[]);
-
+bool IsEnglishWord(std::string const& word);
 Dictionary ReadDictionaryFromFile(std::string const& filePath);
-
-bool StartDialogWithUser(Dictionary& dictionary);
-
-void FindWordInDictionary(Dictionary& dictionary, std::string const& userString, std::string& userTranslation, bool& isDictionaryChanged);
-
-bool CheckUserTranslation(Dictionary& dictionary, std::string const& userString, std::string const& userTranslation);
-
-void CheckForSavingChanges(Dictionary& dictionary, std::string const& dictionaryFileName, std::string& userString);
-
-void OverwriteDictionaryFile(std::string const& fileName, Dictionary const& dictionary);
+void StartDialogWithUser(Dictionary& dictionary, std::string const& dictionaryFilePath);
+bool PrintFoundedTranslations(Dictionary const& dictionary, std::string const& lowerCaseString);
+WordTranslations GetWordTranslations(Dictionary const& dictionary, std::string lowerCaseString);
+WordTranslations GetRussianTranslation(Dictionary const& dictionary, std::string const& lowerCaseString);
+WordTranslations GetEnglishTranslation(Dictionary const& dictionary, const std::string& lowerCaseString);
+bool TranslationSaved(Dictionary& dictionary, std::string& userString);
+void AddTranslationInDictionary(std::string userString, std::string userTranslation, Dictionary& dictionary);
+void SaveChangesIfAllowed(Dictionary& dictionary, std::string const& dictionaryFileName);
+bool Save—hangesToDictionaryFile(Dictionary const& dictionary, std::string const& fileName);
