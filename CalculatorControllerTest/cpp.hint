@@ -1,0 +1,9 @@
+// Файлы указаний помогают среде IDE Visual Studio интерпретировать идентификаторы Visual C++
+// (например, имена функций и макросов).
+// Дополнительные сведения: https://go.microsoft.com/fwlink/?linkid=865984
+#define THEN(desc) INTERNAL_CATCH_DYNAMIC_SECTION( "     Then: " << desc )
+#define THEN(desc)
+#define WHEN(desc) INTERNAL_CATCH_DYNAMIC_SECTION( "     When: " << desc )
+#define WHEN(desc)
+#define TEST_CASE(__VA_ARGS__) INTERNAL_CATCH_TESTCASE( __VA_ARGS__ )
+#define TEST_CASE(__VA_ARGS__) INTERNAL_CATCH_TESTCASE_NO_REGISTRATION(INTERNAL_CATCH_UNIQUE_NAME( C_A_T_C_H_T_E_S_T_ ))
