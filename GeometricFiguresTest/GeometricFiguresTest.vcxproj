@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a7e66d00-80e9-4657-bb4f-b528c094c21a}</ProjectGuid>
-    <RootNamespace>GeometricFigures</RootNamespace>
+    <ProjectGuid>{7673ce08-4722-4d79-b56a-7cf1f83b5354}</ProjectGuid>
+    <RootNamespace>GeometricFiguresTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -94,6 +94,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(TargetPath)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -111,6 +114,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(TargetPath)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -124,6 +130,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(TargetPath)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -141,30 +150,17 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(TargetPath)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Circle.h" />
-    <ClInclude Include="IShape.h" />
-    <ClInclude Include="ISolidShape.h" />
-    <ClInclude Include="LineSegment.h" />
-    <ClInclude Include="Point.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="ShapesController.h" />
-    <ClInclude Include="Triangle.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="LineSegment.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Point.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
-    <ClCompile Include="ShapesController.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GeometricFiguresTest\GeometricFiguresTest.vcxproj">
-      <Project>{7673ce08-4722-4d79-b56a-7cf1f83b5354}</Project>
-    </ProjectReference>
+    <ClCompile Include="GeometricFiguresTest.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..</AdditionalIncludeDirectories>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
