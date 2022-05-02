@@ -6,8 +6,8 @@
 void VerifyCommandHandling(std::string const& command, std::string const& expectedResult, CCalculator& calc)
 {
 	std::stringstream input, output;
-	CCalculatorController control(calc, input, output);
+	CCalculatorController controller(calc, input, output);
 	input << command;
-	REQUIRE(control.HandleCommand());
+	REQUIRE(controller.HandleCommand());
 	REQUIRE(expectedResult == output.str());
 }

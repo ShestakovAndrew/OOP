@@ -12,7 +12,7 @@ int main()
 		{
 			if (std::cin.eof()) return 0;
 
-			std::cout << "Unknown command." << std::endl;
+			std::cout << termcolor::red << "Unknown command." << termcolor::reset << std::endl;
 		}
 	}
 
