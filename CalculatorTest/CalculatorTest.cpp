@@ -371,20 +371,22 @@ TEST_CASE("Examples from document.")
 	}
 }
 
-//TEST_CASE("Ñalculation of large sequences of functions should be successfully.")
-//{
-//	CCalculator calc;
-//	CCalculator::Values functions, variables;
-//
-//	REQUIRE_NOTHROW(calc.SetValueToVariable("x", 1));
-//	REQUIRE_NOTHROW(calc.SetFunction("x2", "x", ÑFunction::Operation::Add, "x"));
-//
-//	for (size_t i = 3; i <= 1000000; i++)
-//	{
-//		REQUIRE_NOTHROW(calc.SetFunction("x" + std::to_string(i), "x" + std::to_string(i - 1), ÑFunction::Operation::Add, "x"));
-//	}
-//
-//	REQUIRE(calc.GetValue("x1000000") == 1000000.00);	
-//	REQUIRE_NOTHROW(calc.SetValueToVariable("x", 2));
-//	REQUIRE(calc.GetValue("x1000000") == 2000000.00);
-//}
+#if (!_DEBUG)
+	TEST_CASE("Ñalculation of large sequences of functions should be successfully.")
+	{
+	CCalculator calc;
+	CCalculator::Values functions, variables;
+
+	REQUIRE_NOTHROW(calc.SetValueToVariable("x", 1));
+	REQUIRE_NOTHROW(calc.SetFunction("x2", "x", ÑFunction::Operation::Add, "x"));
+
+	for (size_t i = 3; i <= 1000000; i++)
+	{
+		REQUIRE_NOTHROW(calc.SetFunction("x" + std::to_string(i), "x" + std::to_string(i - 1), ÑFunction::Operation::Add, "x"));
+	}
+
+	REQUIRE(calc.GetValue("x1000000") == 1000000.00);	
+	REQUIRE_NOTHROW(calc.SetValueToVariable("x", 2));
+	REQUIRE(calc.GetValue("x1000000") == 2000000.00);
+	}
+#endif

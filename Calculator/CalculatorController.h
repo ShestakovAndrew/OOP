@@ -1,5 +1,5 @@
 #pragma once
-#include "iostream"
+#include <iostream>
 #include <sstream>
 #include <functional>
 
@@ -25,7 +25,7 @@ public:
 	bool HandleCommand();
 
 private:
-	using Handler = std::function<void(Arguments const& action)>;
+	using Handler = std::function<void(Arguments const& arguments)>;
 	using ActionMap = std::map<std::string, Handler>;
 
 	void Var(Arguments const& commandFromUser);

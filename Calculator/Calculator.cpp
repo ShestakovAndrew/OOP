@@ -24,10 +24,14 @@ namespace
 		return true;
 	}
 
-	bool CheckCorrectValues(std::optional<double> const& valueOfIdentifier1, std::optional<double> const& valueOfIdentifier2)
+	bool CheckCorrectValues(
+		std::optional<double> const& valueOfIdentifier1,
+		ÑFunction::Operation const& operation,
+		std::optional<double> const& valueOfIdentifier2
+	)
 	{
-		return (valueOfIdentifier1 == std::nullopt) or (valueOfIdentifier2 == std::nullopt) or
-			(valueOfIdentifier2.value() == 0);
+		return (!valueOfIdentifier1.has_value()) or (!valueOfIdentifier2.has_value()) or 
+			(operation == ÑFunction::Operation::Div and valueOfIdentifier2.value() == 0);
 	}
 }
 
@@ -158,16 +162,18 @@ std::optional<double> CCalculator::ComputeFunctionValue(ÑFunction function)
 {
 	std::optional<double> valueOfIdentifier1 = GetValue(function.GetIdentifier1());
 
-	if (function.GetOperation() == ÑFunction::Operation::None) return valueOfIdentifier1;
+	ÑFunction::Operation operation = function.GetOperation();
+
+	if (operation == ÑFunction::Operation::None) return valueOfIdentifier1;
 
 	std::optional<double> valueOfIdentifier2 = GetValue(function.GetIdentifier2());
 
-	if (CheckCorrectValues(valueOfIdentifier1, valueOfIdentifier2))
+	if (CheckCorrectValues(valueOfIdentifier1, operation, valueOfIdentifier2))
 	{
 		return std::nullopt;
 	}
 
-	switch (function.GetOperation())
+	switch (operation)
 	{
 		case ÑFunction::Operation::Add: {
 			return valueOfIdentifier1.value() + valueOfIdentifier2.value();

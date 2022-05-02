@@ -1,7 +1,7 @@
-#include "CalculatorController.h"
-#include "boost/format.hpp"
 #include <regex>
 #include <iomanip>
+#include "CalculatorController.h"
+#include "boost/format.hpp"
 
 namespace
 {
