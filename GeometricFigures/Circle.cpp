@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "Circle.h"
 
 CCircle::CCircle(CPoint center, double radius, uint32_t outlineColor, uint32_t fillColor)
@@ -5,37 +6,37 @@ CCircle::CCircle(CPoint center, double radius, uint32_t outlineColor, uint32_t f
 {
 }
 
-double CCircle::GetArea() const
-{
-	return 0.0;
-}
-
-double CCircle::GetPerimeter() const
-{
-	return 0.0;
-}
-
 std::string CCircle::ToString() const
 {
 	return std::string();
 }
 
+double CCircle::GetArea() const
+{
+	return M_PI * m_radius * m_radius;
+}
+
+double CCircle::GetPerimeter() const
+{
+	return 2 * M_PI * m_radius;
+}
+
 uint32_t CCircle::GetOutlineColor() const
 {
-	return uint32_t();
+	return m_outlineColor;
 }
 
 uint32_t CCircle::GetFillColor() const
 {
-	return uint32_t();
+	return m_fillColor;
 }
 
 CPoint CCircle::GetCenter() const
 {
-	return CPoint();
+	return m_center;
 }
 
 double CCircle::GetRadius() const
 {
-	return 0.0;
+	return m_radius;
 }

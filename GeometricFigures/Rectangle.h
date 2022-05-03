@@ -20,7 +20,6 @@ public:
 
 private:
 	CPoint m_leftTop;
-	CPoint m_rightBottom;
 	double m_width;
 	double m_height;
 	uint32_t m_outlineColor;

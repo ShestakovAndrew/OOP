@@ -5,32 +5,32 @@ CLineSegment::CLineSegment(CPoint startPoint, CPoint endPoint, uint32_t outlineC
 {
 }
 
-double CLineSegment::GetArea() const
-{
-    return 0.0;
-}
-
-double CLineSegment::GetPerimeter() const
-{
-    return 0.0;
-}
-
 std::string CLineSegment::ToString() const
 {
     return std::string();
 }
 
+double CLineSegment::GetArea() const
+{
+    return 0;
+}
+
+double CLineSegment::GetPerimeter() const
+{
+    return sqrt(pow((m_endPoint.x - m_startPoint.x), 2) + pow((m_endPoint.y - m_startPoint.y), 2));
+}
+
 uint32_t CLineSegment::GetOutlineColor() const
 {
-    return uint32_t();
+    return m_outlineColor;
 }
 
 CPoint CLineSegment::GetStartPoint()
 {
-    return CPoint();
+    return m_startPoint;
 }
 
 CPoint CLineSegment::GetEndPoint()
 {
-    return CPoint();
+    return m_endPoint;
 }

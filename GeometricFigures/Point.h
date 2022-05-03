@@ -4,8 +4,8 @@
 class CPoint
 {
 public:
-	double m_x;
-	double m_y;
+	double x;
+	double y;
 
 	std::string ToString() const;
 };

@@ -19,7 +19,7 @@ public:
 private:
 	CPoint m_center;
 	double m_radius;
-	uint32_t m_outlineColor;
 	uint32_t m_fillColor;
+	uint32_t m_outlineColor;
 };
 
