@@ -7,7 +7,20 @@ CRectangle::CRectangle(CPoint leftTop, CPoint rightBottom, double width, double 
 
 std::string CRectangle::ToString() const
 {
-	return std::string();
+	std::stringstream sstream;
+
+	sstream << std::fixed << std::setprecision(2)
+		<< "Type shape: Circle" << std::endl
+		<< "Perimeter: " << GetPerimeter() << std::endl
+		<< "Area: " << GetArea() << std::endl
+		<< "Left top point: " << m_leftTop.ToString() << std::endl
+		<< "Right bottom point: " << GetRightBottom().ToString() << std::endl
+		<< "Width: " << GetWidth() << std::endl
+		<< "Height: " << GetHeight() << std::endl
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor
+		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
+
+	return sstream.str();
 }
 
 double CRectangle::GetArea() const

@@ -8,7 +8,18 @@ CCircle::CCircle(CPoint center, double radius, uint32_t outlineColor, uint32_t f
 
 std::string CCircle::ToString() const
 {
-	return std::string();
+	std::stringstream sstream;
+
+	sstream << std::fixed << std::setprecision(2)
+		<< "Type shape: circle" << std::endl
+		<< "Perimeter: " << GetPerimeter() << std::endl
+		<< "Area: " << GetArea() << std::endl
+		<< "Center: " << m_center.ToString() << std::endl
+		<< "Radius: " << m_radius << std::endl
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor
+		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
+
+	return sstream.str();
 }
 
 double CCircle::GetArea() const

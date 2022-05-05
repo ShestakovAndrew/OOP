@@ -7,7 +7,17 @@ CLineSegment::CLineSegment(CPoint startPoint, CPoint endPoint, uint32_t outlineC
 
 std::string CLineSegment::ToString() const
 {
-    return std::string();
+	std::stringstream sstream;
+
+	sstream << std::fixed << std::setprecision(2)
+		<< "Type shape: Line Segment" << std::endl
+		<< "Perimeter: " << GetPerimeter() << std::endl
+		<< "Area: " << GetArea() << std::endl
+		<< "Start point: " << m_startPoint.ToString() << std::endl
+		<< "End point: " << m_endPoint.ToString() << std::endl
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor;
+
+	return sstream.str();
 }
 
 double CLineSegment::GetArea() const

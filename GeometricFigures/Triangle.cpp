@@ -15,7 +15,19 @@ CTriangle::CTriangle(CPoint vertex1, CPoint vertex2, CPoint vertex3, uint32_t ou
 
 std::string CTriangle::ToString() const
 {
-	return std::string();
+	std::stringstream sstream;
+
+	sstream << std::fixed << std::setprecision(2)
+		<< "Type shape: Triangle" << std::endl
+		<< "Perimeter: " << GetPerimeter() << std::endl
+		<< "Area: " << GetArea() << std::endl
+		<< "Vertex1: " << m_vertex1.ToString() << std::endl
+		<< "Vertex2: " << m_vertex2.ToString() << std::endl
+		<< "Vertex3: " << m_vertex3.ToString() << std::endl
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor
+		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
+
+	return sstream.str();
 }
 
 double CTriangle::GetArea() const
