@@ -31,6 +31,6 @@ TEST_CASE("ToString() should be return correct rectangle information.")
 {
 	CRectangle triangle({ 0, 20 }, 10, 20, 0xff00ff, 0xffffff);
 
-	std::string info = "Type shape: Circle\nPerimeter: 60.00\nArea: 200.00\nLeft top point: [0.00, 20.00]\nRight bottom point: [10.00, 0.00]\nWidth: 10.00\nHeight: 20.00\nOutline color: #ff00ff\nFill color: #ffffff";
+	std::string info = "Type shape: Rectangle\nPerimeter: 60.00\nArea: 200.00\nLeft top point: [0.00, 20.00]\nRight bottom point: [10.00, 0.00]\nWidth: 10.00\nHeight: 20.00\nOutline color: #ff00ff\nFill color: #ffffff";
 	REQUIRE(triangle.ToString() == info);
 }

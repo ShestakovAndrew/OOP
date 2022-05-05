@@ -1,12 +1,12 @@
 #include "ShapesController.h"
-
+#include "ShapesController.h"
 #include <regex>
 
 namespace
 {
-	const std::string REGEX_PARSE_COMMAND = R"(^(LineSegment|Rectangle|Triangle|Circle) ([\d\.]+) ([\d\.]+) ([\d\.]+) ([\d\.]+)? ?([\d\.]+)? ?([\d\.]+)? ?(#[0-9a-f]{6}) ?(#[0-9a-f]{6})?$)";
+	const std::string REGEX_PARSE_COMMAND = R"(^(LineSegment|Rectangle|Triangle|Circle)? ?(-?[\d\.]+)? ?(-?[\d\.]+)? ?(-?[\d\.]+)? ?(-?[\d\.]+)? ?(-?[\d\.]+)? ?(-?[\d\.]+)? ?#?([0-9a-f]{6})? ?#?([0-9a-f]{6})?$)";
 
-	bool ParseCommand(std::string commandFromUser, Arguments& arguments)
+	bool ParseCommand(std::string const& commandFromUser, Arguments& arguments)
 	{
 		std::regex regex(REGEX_PARSE_COMMAND, std::regex_constants::icase);
 		std::smatch match;
@@ -15,17 +15,16 @@ namespace
 
 		arguments.shape = std::string(match[1]);
 
-		if (!arguments.shape.has_value()) return false;
+		if (not arguments.shape.has_value()) return false;
 
-		arguments.firstNumber = std::stod(match[2].str());
-		arguments.secondNumber = std::stod(std::string(match[3]));
-		arguments.thirdNumber = std::stod(std::string(match[4]));
-		arguments.fourthNumber = std::stod(std::string(match[5]));
-		arguments.fifthNumber = std::stod(std::string(match[6]));
-		arguments.sixthNumber = std::stod(std::string(match[7]));
-
-		arguments.outlineColor = std::stoul(match[8].str(), 0, 16);
-		arguments.fillColor = std::stoul(match[9].str(), 0, 16);
+		if (!match[2].str().empty()) arguments.firstNumber = std::stod(match[2].str());
+		if (!match[3].str().empty()) arguments.secondNumber = std::stod(match[3].str());
+		if (!match[4].str().empty()) arguments.thirdNumber = std::stod(match[4].str());
+		if (!match[5].str().empty()) arguments.fourthNumber = std::stod(match[5].str());
+		if (!match[6].str().empty()) arguments.fifthNumber = std::stod(match[6].str());
+		if (!match[7].str().empty()) arguments.sixthNumber = std::stod(match[7].str());
+		if (!match[8].str().empty()) arguments.outlineColor = std::stoul(match[8].str(), 0, 16);
+		if (!match[9].str().empty()) arguments.fillColor = std::stoul(match[9].str(), 0, 16);
 
 		return true;
 	}
@@ -53,13 +52,14 @@ bool CShapesController::HandleCommand()
 
 	if (auto const& it = m_actionMap.find(args.shape.value()); it != m_actionMap.end())
 	{
-		return it->second(args);
+		it->second(args);
+		return true;
 	}
 
 	return false;
 }
 
-bool CShapesController::LineSegment(Arguments const& args)
+void CShapesController::LineSegment(Arguments const& args)
 {
 	if (not args.firstNumber.has_value() or
 		not args.secondNumber.has_value() or
@@ -71,10 +71,9 @@ bool CShapesController::LineSegment(Arguments const& args)
 		args.fillColor.has_value()
 	)
 	{
-		m_output << "Invalid input" << std::endl 
-			<< "Usage: LineSegment <start point> <end point> <outline color>" << std::endl
-			<< "Example: LineSegment 10.3 20.15 30.7 40.4 #ff0000" << std::endl;
-		return false;
+		m_output << "Invalid input" << std::endl
+			     << "Usage: LineSegment <start point> <end point> <outline color>" << std::endl;
+		return;
 	}
 
 	CPoint startPoint = { args.firstNumber.value(), args.secondNumber.value() };
@@ -84,11 +83,9 @@ bool CShapesController::LineSegment(Arguments const& args)
 	m_shapes.push_back(
 		std::make_shared<CLineSegment>(startPoint, endPoint, outlineColor)
 	);
-
-	return true;
 }
 
-bool CShapesController::Triangle(Arguments const& args)
+void CShapesController::Triangle(Arguments const& args)
 {
 	if (not args.firstNumber.has_value() or
 		not args.secondNumber.has_value() or
@@ -100,10 +97,9 @@ bool CShapesController::Triangle(Arguments const& args)
 		not args.fillColor.has_value()
 		)
 	{
-		m_output << "Invalid input" << std::endl 
-			<< "Usage: Triangle <vertex1> <vertex2> <vertex3> <outline color> <fill color>" << std::endl
-			<< "Example: Triangle 0 3.1 3.5 5.1 0 0 #ff0000 #00ff00" << std::endl;
-		return false;
+		m_output << "Invalid input" << std::endl
+			     << "Usage: Triangle <vertex1> <vertex2> <vertex3> <outline color> <fill color>" << std::endl;
+	return;
 	}
 
 	CPoint vertex1 = { args.firstNumber.value(), args.secondNumber.value() };
@@ -115,11 +111,9 @@ bool CShapesController::Triangle(Arguments const& args)
 	m_shapes.push_back(
 		std::make_shared<CTriangle>(vertex1, vertex2, vertex3, outlineColor, fillColor)
 	);
-	
-	return true;
 }
 
-bool CShapesController::Rectangle(Arguments const& args)
+void CShapesController::Rectangle(Arguments const& args)
 {
 	if (not args.firstNumber.has_value() or
 		not args.secondNumber.has_value() or
@@ -132,9 +126,8 @@ bool CShapesController::Rectangle(Arguments const& args)
 		)
 	{
 		m_output << "Invalid input" << std::endl
-			<< "Usage: Rectangle <left top vertex> <width> <height> <outline color> <fill color>" << std::endl
-			<< "Example: Rectangle 5 3.2 4 5.2 #ff0000 #00ff00" << std::endl;
-		return false;
+			     << "Usage: Rectangle <left top vertex> <width> <height> <outline color> <fill color>" << std::endl;
+		return;
 	}
 
 	CPoint leftTop = { args.firstNumber.value(), args.secondNumber.value() };
@@ -146,11 +139,9 @@ bool CShapesController::Rectangle(Arguments const& args)
 	m_shapes.push_back(
 		std::make_shared<CRectangle>(leftTop, width, height, outlineColor, fillColor)
 	);
-
-	return true;
 }
 
-bool CShapesController::Circle(Arguments const& args)
+void CShapesController::Circle(Arguments const& args)
 {
 	if (not args.firstNumber.has_value() or
 		not args.secondNumber.has_value() or
@@ -162,10 +153,9 @@ bool CShapesController::Circle(Arguments const& args)
 		not args.fillColor.has_value()
 		)
 	{
-		m_output << "Invalid input" << std::endl 
-			<< "Usage: Circle <center> <radius> <outline color> <fill color>" << std::endl
-			<< "Example: Circle 0 3.1 5.1 #ff0000 #00ff00" << std::endl;
-		return false;
+		m_output << "Invalid input" << std::endl
+			     << "Usage: Circle <center> <radius> <outline color> <fill color>" << std::endl;
+		return;
 	}
 
 	CPoint center = { args.firstNumber.value(), args.secondNumber.value() };
@@ -176,8 +166,14 @@ bool CShapesController::Circle(Arguments const& args)
 	m_shapes.push_back(
 		std::make_shared<CCircle>(center, radius, outlineColor, fillColor)
 	);
+}
 
-	return true;
+void CShapesController::GetLastShapeInfo() const
+{
+	for (auto const& shape : m_shapes)
+	{
+		m_output << shape->ToString();
+	}
 }
 
 void CShapesController::PrintShapeWithMaxArea() const
@@ -195,8 +191,8 @@ void CShapesController::PrintShapeWithMaxArea() const
 		}
 	);
 
-	m_output << "Shape with max area: " << std::endl
-		<< (*shapeWithMaxArea)->ToString() << std::endl;
+	m_output << "Shape with max area:" << std::endl
+		<< (*shapeWithMaxArea)->ToString();
 }
 
 void CShapesController::PrintShapeWithMinPerimeter() const
@@ -214,6 +210,6 @@ void CShapesController::PrintShapeWithMinPerimeter() const
 		}
 	);
 
-	m_output << "Shape with max area: " << std::endl 
-		<< (*shapeWithMinPerimeter)->ToString() << std::endl;
+	m_output << "Shape with min perimeter:" << std::endl 
+		<< (*shapeWithMinPerimeter)->ToString();
 }

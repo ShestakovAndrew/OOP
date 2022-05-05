@@ -159,6 +159,7 @@
     <ClCompile Include="..\GeometricFigures\LineSegment.cpp" />
     <ClCompile Include="..\GeometricFigures\Point.cpp" />
     <ClCompile Include="..\GeometricFigures\Rectangle.cpp" />
+    <ClCompile Include="..\GeometricFigures\ShapesController.cpp" />
     <ClCompile Include="..\GeometricFigures\Triangle.cpp" />
     <ClCompile Include="CircleTests.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
@@ -184,6 +185,12 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="ShapeControllerTest.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="TriangleTests.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..</AdditionalIncludeDirectories>
@@ -199,6 +206,7 @@
     <ClInclude Include="..\GeometricFigures\LineSegment.h" />
     <ClInclude Include="..\GeometricFigures\Point.h" />
     <ClInclude Include="..\GeometricFigures\Rectangle.h" />
+    <ClInclude Include="..\GeometricFigures\ShapesController.h" />
     <ClInclude Include="..\GeometricFigures\Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

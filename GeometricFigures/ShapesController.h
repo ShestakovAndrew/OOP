@@ -33,17 +33,18 @@ public:
 	CShapesController(std::istream& input, std::ostream& output);
 	bool HandleCommand();
 
+	void GetLastShapeInfo() const;
 	void PrintShapeWithMaxArea() const;
 	void PrintShapeWithMinPerimeter() const;
 
 private:
-	using Handler = std::function<bool(Arguments const& command)>;
+	using Handler = std::function<void(Arguments const& command)>;
 	using ActionMap = std::map<std::string, Handler>;
 
-	bool LineSegment(Arguments const& command);
-	bool Triangle(Arguments const& command);
-	bool Rectangle(Arguments const& command);
-	bool Circle(Arguments const& command);
+	void LineSegment(Arguments const& command);
+	void Triangle(Arguments const& command);
+	void Rectangle(Arguments const& command);
+	void Circle(Arguments const& command);
 
 	const ActionMap m_actionMap;
 	std::istream& m_input;

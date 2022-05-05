@@ -10,7 +10,7 @@ std::string CRectangle::ToString() const
 	std::stringstream sstream;
 
 	sstream << std::fixed << std::setprecision(2)
-		<< "Type shape: Circle" << std::endl
+		<< "Type shape: Rectangle" << std::endl
 		<< "Perimeter: " << GetPerimeter() << std::endl
 		<< "Area: " << GetArea() << std::endl
 		<< "Left top point: " << m_leftTop.ToString() << std::endl
