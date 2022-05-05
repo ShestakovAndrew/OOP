@@ -5,7 +5,7 @@
 class CRectangle : public ISolidShape
 {
 public:
-	CRectangle(CPoint leftTop, CPoint rightBottom, double width, double height, uint32_t outlineColor, uint32_t fillColor);
+	CRectangle(CPoint leftTop, double width, double height, uint32_t outlineColor, uint32_t fillColor);
 
 	double GetArea() const override;
 	double GetPerimeter() const override;

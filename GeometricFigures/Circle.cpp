@@ -11,12 +11,12 @@ std::string CCircle::ToString() const
 	std::stringstream sstream;
 
 	sstream << std::fixed << std::setprecision(2)
-		<< "Type shape: circle" << std::endl
+		<< "Type shape: Circle" << std::endl
 		<< "Perimeter: " << GetPerimeter() << std::endl
 		<< "Area: " << GetArea() << std::endl
 		<< "Center: " << m_center.ToString() << std::endl
 		<< "Radius: " << m_radius << std::endl
-		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor << std::endl
 		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
 
 	return sstream.str();

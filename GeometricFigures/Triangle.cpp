@@ -24,7 +24,7 @@ std::string CTriangle::ToString() const
 		<< "Vertex1: " << m_vertex1.ToString() << std::endl
 		<< "Vertex2: " << m_vertex2.ToString() << std::endl
 		<< "Vertex3: " << m_vertex3.ToString() << std::endl
-		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor << std::endl
 		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
 
 	return sstream.str();

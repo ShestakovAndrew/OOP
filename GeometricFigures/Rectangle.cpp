@@ -1,6 +1,6 @@
 #include "Rectangle.h"
 
-CRectangle::CRectangle(CPoint leftTop, CPoint rightBottom, double width, double height, uint32_t outlineColor, uint32_t fillColor)
+CRectangle::CRectangle(CPoint leftTop, double width, double height, uint32_t outlineColor, uint32_t fillColor)
 	: m_leftTop(leftTop), m_width(width), m_height(height), m_outlineColor(outlineColor), m_fillColor(fillColor)
 {
 }
@@ -17,7 +17,7 @@ std::string CRectangle::ToString() const
 		<< "Right bottom point: " << GetRightBottom().ToString() << std::endl
 		<< "Width: " << GetWidth() << std::endl
 		<< "Height: " << GetHeight() << std::endl
-		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor
+		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor << std::endl
 		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
 
 	return sstream.str();
