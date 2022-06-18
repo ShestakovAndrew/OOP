@@ -3,6 +3,7 @@
 CRectangle::CRectangle(CPoint leftTop, double width, double height, uint32_t outlineColor, uint32_t fillColor)
 	: m_leftTop(leftTop), m_width(width), m_height(height), m_outlineColor(outlineColor), m_fillColor(fillColor)
 {
+	//нужны проверки, (разгрузить контроллер, для всех фигур)
 }
 
 std::string CRectangle::ToString() const
@@ -61,4 +62,14 @@ double CRectangle::GetWidth() const
 double CRectangle::GetHeight() const
 {
 	return m_height;
+}
+
+void CRectangle::Draw(ICanvas& canvas) const
+{
+	CPoint rightTop = { m_leftTop.x + GetWidth(), m_leftTop.y };
+	CPoint leftBottom = { m_leftTop.x, m_leftTop.y - GetHeight() };
+	CPoint rightBottom = GetRightBottom();
+
+	std::vector<CPoint> vertices = { m_leftTop, rightTop, rightBottom, leftBottom };
+	canvas.DrawPolygon(vertices, m_outlineColor, m_fillColor);
 }

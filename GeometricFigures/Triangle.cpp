@@ -68,3 +68,9 @@ CPoint CTriangle::GetVertex3() const
 {
 	return m_vertex3;
 }
+
+void CTriangle::Draw(ICanvas& canvas) const
+{
+	std::vector<CPoint> vertices = { m_vertex1, m_vertex2, m_vertex3 };
+	canvas.DrawPolygon(vertices, m_outlineColor, m_fillColor);
+}

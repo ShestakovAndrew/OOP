@@ -2,7 +2,6 @@
 #include "ISolidShape.h"
 #include "Point.h"
 
-
 class CTriangle : public ISolidShape
 {
 public:
@@ -13,6 +12,7 @@ public:
 	std::string ToString() const override;
 	uint32_t GetOutlineColor() const override;
 	uint32_t GetFillColor() const override;
+	void Draw(ICanvas& canvas) const override;
 
 	CPoint GetVertex1() const;
 	CPoint GetVertex2() const;

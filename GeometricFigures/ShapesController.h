@@ -11,6 +11,8 @@
 #include "Rectangle.h"
 #include "Triangle.h"
 
+//можно разделить этот контроллер. ¬ынести создание в отдельный класс (Factory)
+
 namespace
 {
 	struct Arguments
