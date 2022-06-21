@@ -10,6 +10,7 @@
 #include "Circle.h"
 #include "Rectangle.h"
 #include "Triangle.h"
+#include "Canvas.h"
 
 //можно разделить этот контроллер. ¬ынести создание в отдельный класс (Factory)
 
@@ -35,6 +36,7 @@ public:
 	CShapesController(std::istream& input, std::ostream& output);
 	bool HandleCommand();
 
+	void DrawShapes() const;
 	void GetLastShapeInfo() const;
 	void PrintShapeWithMaxArea() const;
 	void PrintShapeWithMinPerimeter() const;

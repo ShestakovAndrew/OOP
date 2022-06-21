@@ -192,6 +192,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="MockCanvas.cpp" />
     <ClCompile Include="RectangleTests.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..</AdditionalIncludeDirectories>
@@ -222,6 +223,7 @@
     <ClInclude Include="..\GeometricFigures\Rectangle.h" />
     <ClInclude Include="..\GeometricFigures\ShapesController.h" />
     <ClInclude Include="..\GeometricFigures\Triangle.h" />
+    <ClInclude Include="MockCanvas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

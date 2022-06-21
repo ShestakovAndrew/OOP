@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "GeometricFigures/Rectangle.h"
+#include "MockCanvas.h"
 
 TEST_CASE("ÑRectangle constructor should be work correctló.")
 {
@@ -33,4 +34,18 @@ TEST_CASE("ToString() should be return correct rectangle information.")
 
 	std::string info = "Type shape: Rectangle\nPerimeter: 60.00\nArea: 200.00\nLeft top point: [0.00, 20.00]\nRight bottom point: [10.00, 0.00]\nWidth: 10.00\nHeight: 20.00\nOutline color: #ff00ff\nFill color: #ffffff";
 	REQUIRE(triangle.ToString() == info);
+}
+
+TEST_CASE("Draw in Rectangle must DrawPolygon on Canvas")
+{
+	CMockCanvas canvas;
+
+	CPoint leftTop = { 5, 5.5 };
+	double width = 10;
+	double height = 5;
+	CRectangle rectangle(leftTop, width, height, 0, 0xffffff);
+
+	rectangle.Draw(canvas);
+	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawPolygon };
+	CHECK(canvas.GetData() == reqData);
 }

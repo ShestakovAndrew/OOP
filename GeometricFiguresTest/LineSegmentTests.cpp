@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "GeometricFigures/LineSegment.h"
+#include "MockCanvas.h"
 
 TEST_CASE("ÑLineSegment constructor should be work correctló.")
 {
@@ -28,4 +29,17 @@ TEST_CASE("ToString() should be return correct line segment information.")
 
 	std::string info = "Type shape: Line Segment\nPerimeter: 15.81\nArea: 0.00\nStart point: [0.00, 0.00]\nEnd point: [-5.00, 15.00]\nOutline color: #ff00ff";
 	REQUIRE(lineSegment.ToString() == info);
+}
+
+TEST_CASE("Draw in LineSegment must DrawLine on Canvas")
+{
+	CMockCanvas canvas;
+
+	CPoint pointFrom = { 0, 0 };
+	CPoint pointTo = { 5, 12 };
+	CLineSegment line(pointFrom, pointTo, 0xff00ff);
+
+	line.Draw(canvas);
+	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawLine };
+	CHECK(canvas.GetData() == reqData);
 }

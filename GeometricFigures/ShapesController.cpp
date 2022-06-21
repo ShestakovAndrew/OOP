@@ -1,5 +1,4 @@
 #include "ShapesController.h"
-#include "ShapesController.h"
 #include <regex>
 
 namespace
@@ -166,6 +165,32 @@ void CShapesController::Circle(Arguments const& args)
 	m_shapes.push_back(
 		std::make_shared<CCircle>(center, radius, outlineColor, fillColor)
 	);
+}
+
+void CShapesController::DrawShapes() const
+{
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::VideoMode(800, 800), "Shapes", sf::Style::Default, settings);
+	CCanvas canvas(window);
+
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+			{
+				window.close();
+			}
+		}
+		window.clear(sf::Color(255, 255, 255));
+		for (auto shape : m_shapes)
+		{
+			shape->Draw(canvas);
+		}
+		window.display();
+	}
 }
 
 void CShapesController::GetLastShapeInfo() const

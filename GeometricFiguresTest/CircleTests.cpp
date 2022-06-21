@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "GeometricFigures/Circle.h"
+#include "MockCanvas.h"
 
 TEST_CASE("ÑCircle constructor should be work correctló.")
 {
@@ -30,4 +31,17 @@ TEST_CASE("ToString() should be return correct circle information.")
 
 	std::string info = "Type shape: Circle\nPerimeter: 94.25\nArea: 706.86\nCenter: [0.00, 0.00]\nRadius: 15.00\nOutline color: #ff00ff\nFill color: #ffffff";
 	REQUIRE(circle.ToString() == info);
+}
+
+TEST_CASE("Draw in Circle must DrawCircle on Canvas")
+{
+	CMockCanvas canvas;
+
+	CPoint center = { 5, 0 };
+	double radius = 10;
+	CCircle circle(center, radius, 0, 0xffffff);
+
+	circle.Draw(canvas);
+	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawCircle };
+	CHECK(canvas.GetData() == reqData);
 }
