@@ -13,7 +13,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков\Interfas">
+    <Filter Include="Файлы заголовков\Shapes">
+      <UniqueIdentifier>{88a7f70d-6e5e-4884-b976-1c3cf26f22b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Draw">
+      <UniqueIdentifier>{81201f6f-2c9a-495b-a06e-eb408fa64c03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Shapes">
+      <UniqueIdentifier>{25378fdb-bef4-499c-b58f-73dc4e7b92de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\ShapesTests">
+      <UniqueIdentifier>{c9b72e29-6ae6-48d3-b1a3-ea9739ac0538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Draw">
+      <UniqueIdentifier>{ef981230-a2bd-4e72-b4ba-719a75e4fe82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Interfaces">
       <UniqueIdentifier>{4aad70b2-594d-42f0-8950-edae349d79f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -21,85 +36,85 @@
     <ClCompile Include="GeometricFiguresTest.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="CircleTests.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="LineSegmentTests.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="RectangleTests.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="TriangleTests.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ShapeControllerTest.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="MockCanvas.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeometricFigures\Canvas.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeometricFigures\Circle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeometricFigures\LineSegment.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeometricFigures\Point.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GeometricFigures\Rectangle.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="..\GeometricFigures\ShapesController.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\GeometricFigures\Circle.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeometricFigures\LineSegment.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeometricFigures\Point.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeometricFigures\Rectangle.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
     <ClCompile Include="..\GeometricFigures\Triangle.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleTests.cpp">
+      <Filter>Исходные файлы\ShapesTests</Filter>
+    </ClCompile>
+    <ClCompile Include="LineSegmentTests.cpp">
+      <Filter>Исходные файлы\ShapesTests</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleTests.cpp">
+      <Filter>Исходные файлы\ShapesTests</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleTests.cpp">
+      <Filter>Исходные файлы\ShapesTests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GeometricFigures\Canvas.cpp">
+      <Filter>Исходные файлы\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="MockCanvas.cpp">
+      <Filter>Исходные файлы\Draw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MockCanvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\Canvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\Circle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\ICanvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\ICanvasDrawable.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\IShape.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\ISolidShape.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\LineSegment.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\Point.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GeometricFigures\Rectangle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="..\GeometricFigures\ShapesController.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="..\GeometricFigures\ICanvas.h">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\ICanvasDrawable.h">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\IShape.h">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\ISolidShape.h">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\Circle.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\LineSegment.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\Point.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\Rectangle.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
     <ClInclude Include="..\GeometricFigures\Triangle.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GeometricFigures\Canvas.h">
+      <Filter>Файлы заголовков\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="MockCanvas.h">
+      <Filter>Файлы заголовков\Draw</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

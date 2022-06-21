@@ -45,12 +45,12 @@ bool CShapesController::HandleCommand()
 	std::string commandFromUser;
 	std::getline(m_input, commandFromUser);
 
-	Arguments args;
-	if (!ParseCommand(commandFromUser, args)) return false;
+	Arguments command;
+	if (!ParseCommand(commandFromUser, command)) return false;
 
-	if (auto const& it = m_actionMap.find(args.shape.value()); it != m_actionMap.end())
+	if (auto const& it = m_actionMap.find(command.shape.value()); it != m_actionMap.end())
 	{
-		it->second(args);
+		it->second(command);
 		return true;
 	}
 
