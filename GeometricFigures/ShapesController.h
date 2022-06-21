@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 #include <regex>
+#include <iostream>
+#include <string>
 
 #include "LineSegment.h"
 #include "Circle.h"

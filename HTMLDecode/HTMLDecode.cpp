@@ -11,7 +11,6 @@ namespace
 	};
 }
 
-
 void FindAndReplace(std::string& subject, std::string const& search, std::string const& replace)
 {
 	size_t foundPosition = 0;
