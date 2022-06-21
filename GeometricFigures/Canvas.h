@@ -1,6 +1,5 @@
 #pragma once
 #include "ICanvas.h"
-#include <SFML/Graphics.hpp>
 
 class CCanvas : public ICanvas
 {

@@ -1,5 +1,3 @@
-#include <sstream>
-#include <iomanip>
 #include "Point.h"
 
 std::string CPoint::ToString() const

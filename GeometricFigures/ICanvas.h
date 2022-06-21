@@ -2,6 +2,8 @@
 #include "Point.h"
 #include <vector>
 
+#include <SFML/Graphics.hpp>
+
 class ICanvas
 {
 public:

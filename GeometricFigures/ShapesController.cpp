@@ -1,5 +1,4 @@
 #include "ShapesController.h"
-#include <regex>
 
 namespace
 {
@@ -185,7 +184,7 @@ void CShapesController::DrawShapes() const
 			}
 		}
 		window.clear(sf::Color(255, 255, 255));
-		for (auto shape : m_shapes)
+		for (auto& shape : m_shapes)
 		{
 			shape->Draw(canvas);
 		}

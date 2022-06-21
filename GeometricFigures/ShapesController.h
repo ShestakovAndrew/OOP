@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <regex>
 
 #include "LineSegment.h"
 #include "Circle.h"

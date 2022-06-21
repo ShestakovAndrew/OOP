@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 class CPoint
 {
