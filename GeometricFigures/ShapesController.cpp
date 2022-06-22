@@ -59,7 +59,8 @@ CShapesController::CShapesController(std::istream& input, std::ostream& output)
 		{ "LineSegment", std::bind(&CShapesController::LineSegment, this, std::placeholders::_1) },
 		{ "Rectangle", std::bind(&CShapesController::Rectangle, this, std::placeholders::_1) },
 		{ "Triangle", std::bind(&CShapesController::Triangle, this, std::placeholders::_1) },
-		{ "Circle", std::bind(&CShapesController::Circle, this, std::placeholders::_1) }
+		{ "Circle", std::bind(&CShapesController::Circle, this, std::placeholders::_1) },
+		{ "Draw", std::bind(&CShapesController::DrawShapes, this) }
 	})
 {
 }
@@ -179,7 +180,7 @@ void CShapesController::Circle(std::istream& command)
 	}
 }
 
-void CShapesController::DrawShapes() const
+void CShapesController::DrawShapes()
 {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;

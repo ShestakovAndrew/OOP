@@ -14,7 +14,6 @@ int main()
 
 	controller.PrintShapeWithMaxArea();
 	controller.PrintShapeWithMinPerimeter();
-	controller.DrawShapes();
 
 	return 0;
 }

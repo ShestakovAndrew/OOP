@@ -23,7 +23,6 @@ public:
 	CShapesController(std::istream& input, std::ostream& output);
 	bool HandleCommand();
 
-	void DrawShapes() const;
 	void GetLastShapeInfo() const;
 	void PrintShapeWithMaxArea() const;
 	void PrintShapeWithMinPerimeter() const;
@@ -36,6 +35,7 @@ private:
 	void Triangle(std::istream& command);
 	void Rectangle(std::istream& command);
 	void Circle(std::istream& command);
+	void DrawShapes();
 
 	const ActionMap m_actionMap;
 	std::istream& m_input;
