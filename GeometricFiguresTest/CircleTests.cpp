@@ -29,7 +29,7 @@ TEST_CASE("ToString() should be return correct circle information.")
 {
 	CCircle circle({ 0, 0 }, 15, 0xff00ff, 0xffffff);
 
-	std::string info = "Type shape: Circle\nPerimeter: 94.25\nArea: 706.86\nCenter: [0.00, 0.00]\nRadius: 15.00\nOutline color: #ff00ff\nFill color: #ffffff";
+	std::string info = "Type shape: Circle\nPerimeter: 94.25\nArea: 706.86\nCenter: [0.00, 0.00]\nRadius: 15.00\nOutline color: ff00ff\nFill color: ffffff";
 	REQUIRE(circle.ToString() == info);
 }
 

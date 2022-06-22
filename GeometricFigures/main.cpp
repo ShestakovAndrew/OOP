@@ -8,7 +8,7 @@ int main()
 	{
 		if (!controller.HandleCommand())
 		{
-			std::cout << "Unknown command!\n";
+			std::cout << "Unknown command!" << std::endl;
 		}
 	}
 

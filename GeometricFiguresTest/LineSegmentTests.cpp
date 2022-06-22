@@ -27,7 +27,7 @@ TEST_CASE("ToString() should be return correct line segment information.")
 {
 	CLineSegment lineSegment({ 0, 0 }, { -5, 15 }, 0xff00ff);
 
-	std::string info = "Type shape: Line Segment\nPerimeter: 15.81\nArea: 0.00\nStart point: [0.00, 0.00]\nEnd point: [-5.00, 15.00]\nOutline color: #ff00ff";
+	std::string info = "Type shape: Line Segment\nPerimeter: 15.81\nArea: 0.00\nStart point: [0.00, 0.00]\nEnd point: [-5.00, 15.00]\nOutline color: ff00ff";
 	REQUIRE(lineSegment.ToString() == info);
 }
 

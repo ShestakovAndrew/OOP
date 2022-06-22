@@ -17,22 +17,6 @@
 
 //можно разделить этот контроллер. ¬ынести создание в отдельный класс (Factory)
 
-namespace
-{
-	struct Arguments
-	{
-		std::optional<std::string> shape;
-		std::optional<double> firstNumber;
-		std::optional<double> secondNumber;
-		std::optional<double> thirdNumber;
-		std::optional<double> fourthNumber;
-		std::optional<double> fifthNumber;
-		std::optional<double> sixthNumber;
-		std::optional<uint32_t> outlineColor;
-		std::optional<uint32_t> fillColor;
-	};
-}
-
 class CShapesController
 {
 public:
@@ -45,13 +29,13 @@ public:
 	void PrintShapeWithMinPerimeter() const;
 
 private:
-	using Handler = std::function<void(Arguments const& command)>;
+	using Handler = std::function<void(std::istream& command)>;
 	using ActionMap = std::map<std::string, Handler>;
 
-	void LineSegment(Arguments const& command);
-	void Triangle(Arguments const& command);
-	void Rectangle(Arguments const& command);
-	void Circle(Arguments const& command);
+	void LineSegment(std::istream& command);
+	void Triangle(std::istream& command);
+	void Rectangle(std::istream& command);
+	void Circle(std::istream& command);
 
 	const ActionMap m_actionMap;
 	std::istream& m_input;

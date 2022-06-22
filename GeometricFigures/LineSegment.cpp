@@ -15,7 +15,7 @@ std::string CLineSegment::ToString() const
 		<< "Area: " << GetArea() << std::endl
 		<< "Start point: " << m_startPoint.ToString() << std::endl
 		<< "End point: " << m_endPoint.ToString() << std::endl
-		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor;
+		<< "Outline color: " << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor;
 
 	return sstream.str();
 }

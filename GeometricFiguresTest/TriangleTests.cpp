@@ -31,7 +31,7 @@ TEST_CASE("ToString() must return triangle information")
 {
 	CTriangle triangle({ 1, 1 }, { 3, 5 }, { 20, 0 }, 0xff00ff, 0xffffff);
 
-	std::string info = "Type shape: Triangle\nPerimeter: 41.22\nArea: 39.00\nVertex1: [1.00, 1.00]\nVertex2: [3.00, 5.00]\nVertex3: [20.00, 0.00]\nOutline color: #ff00ff\nFill color: #ffffff";
+	std::string info = "Type shape: Triangle\nPerimeter: 41.22\nArea: 39.00\nVertex1: [1.00, 1.00]\nVertex2: [3.00, 5.00]\nVertex3: [20.00, 0.00]\nOutline color: ff00ff\nFill color: ffffff";
 	REQUIRE(triangle.ToString() == info);
 }
 

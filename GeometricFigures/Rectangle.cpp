@@ -18,8 +18,8 @@ std::string CRectangle::ToString() const
 		<< "Right bottom point: " << GetRightBottom().ToString() << std::endl
 		<< "Width: " << GetWidth() << std::endl
 		<< "Height: " << GetHeight() << std::endl
-		<< "Outline color: #" << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor << std::endl
-		<< "Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
+		<< "Outline color: " << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor << std::endl
+		<< "Fill color: " << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
 
 	return sstream.str();
 }
