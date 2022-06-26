@@ -1,6 +1,15 @@
 #pragma once
 #include <sstream>
 
+const unsigned YEARS_IN_CENTURY = 100;
+const unsigned YEARS_IN_ERA = 400;
+const unsigned DAYS_IN_ERA = 146097;
+const unsigned DAYS_IN_BASE_YEAR = 365;
+const unsigned DAYS_BETWEEN_FIRST_ERA_AND_1970 = 719468; // from 0000-03-01 to 1970-01-01;
+const unsigned DAYS_IN_100_YEARS_OF_EAR = 36524;
+const unsigned DAYS_IN_4_YEARS_OF_EAR = 1460;
+const unsigned MAX_DAYS_AFTER_1970 = 2932896;
+
 enum class Month
 {
 	JANUARY = 1, FEBRUARY, MARCH, APRIL,
@@ -17,7 +26,7 @@ enum class WeekDay
 class CDate
 {
 public:
-	explicit CDate(unsigned timestamp = 0);
+	explicit CDate(unsigned daysAfter1970 = 0);
 	CDate(unsigned day, Month month, unsigned year);
 
 	unsigned GetDay() const;
@@ -31,22 +40,25 @@ public:
 	const CDate operator++(int);
 	const CDate operator--(int);
 
-	CDate operator+(unsigned days);
-
-	CDate operator-(unsigned days);
-	int operator-(CDate const& data);
-
 	CDate& operator+=(unsigned days);
 	CDate& operator-=(unsigned days);
 
-	bool operator==(CDate const& other) const;
-	bool operator!=(CDate const& other) const;
+	CDate operator+(unsigned days) const;
+	CDate operator-(unsigned days) const;
 
-	bool operator>(CDate const& other) const;
-	bool operator<(CDate const& other) const;
+	int operator-(CDate const& data) const noexcept;
 
-	bool operator<=(CDate const& other) const;
-	bool operator>=(CDate const& other) const;
+	bool operator==(CDate const& other) const noexcept;
+	bool operator!=(CDate const& other) const noexcept;
+
+	bool operator>(CDate const& other) const noexcept;
+	bool operator<(CDate const& other) const noexcept;
+
+	bool operator<=(CDate const& other) const noexcept;
+	bool operator>=(CDate const& other) const noexcept;
+
+	friend std::istream& operator>>(std::istream& in, CDate& date);
+	friend std::ostream& operator<<(std::ostream& out, CDate date);
 
 private:
 	unsigned GetDaysBeforeData(unsigned day, Month const& month, unsigned year) const;
@@ -56,15 +68,12 @@ private:
 	unsigned GetYearOfEra() const;
 	unsigned GetDayOfYear() const;
 
-	unsigned GetShiftedMonthPositionFrom(Month const& normalMonth) const;
-	unsigned GetDaysOfYearByMonthPosition(unsigned monthPosition) const;
-	unsigned GetMonthPositionByDayOfYear(unsigned dayOfYear) const;
+	unsigned GetShiftedMonthPositionFrom(Month const& normalMonth) const noexcept;
+	unsigned GetDaysOfYearByMonthPosition(unsigned monthPosition) const noexcept;
+	unsigned GetMonthPositionByDayOfYear(unsigned dayOfYear) const noexcept;
 
-	bool IsDataValid(unsigned day, Month month, unsigned year) const;
-	bool IsDataValid(unsigned daysAfter1970) const;
+	bool IsDataValid(unsigned day, Month month, unsigned year) const noexcept;
+	bool IsDataValid(unsigned daysAfter1970) const noexcept;
 
 	unsigned m_daysAfter1970;
 };
-
-std::ostream& operator<<(std::ostream& out, CDate const& date);
-std::istream& operator>>(std::istream& in, CDate& date);
