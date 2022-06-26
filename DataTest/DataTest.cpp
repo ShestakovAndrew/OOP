@@ -257,4 +257,26 @@ TEST_CASE("Date modification operators should work correctly.")
 			REQUIRE_THROWS_AS(date3 -= 1, std::out_of_range);
 		}
 	}
+
+	SECTION("Operator<< and Operator>>")
+	{
+		CDate date(27, Month::JUNE, 2022);
+		std::stringstream ss;
+		ss << date;
+		REQUIRE("27.06.2022" == ss.str());
+
+		ss >> date;
+		REQUIRE(date.GetDay() == 27);
+		REQUIRE(date.GetMonth() == Month::JUNE);
+		REQUIRE(date.GetYear() == 2022);
+
+		SECTION("If reading failed then the stream has a flag failbit")
+		{
+			std::stringstream ss;
+			ss << "01,01,2022";
+			CDate date;
+			ss >> date;
+			REQUIRE(ss.fail());
+		}
+	}
 }

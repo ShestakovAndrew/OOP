@@ -4,11 +4,6 @@
 
 namespace
 {
-	void operator++(Month& month)
-	{
-		month = static_cast<Month>((static_cast<int>(month) + 1) % 12);
-	}
-
 	unsigned ToInt(Month const& month)
 	{
 		return static_cast<unsigned>(month);
@@ -18,21 +13,19 @@ namespace
 	{
 		return static_cast<Month>(numberOfMonth);
 	}
-
 }
 
 CDate::CDate(unsigned day, Month month, unsigned year)
 {
 	if (IsDataValid(day, month, year))
 	{
-		m_daysAfter1970 = GetDaysBeforeData(day, month, year);
+		m_daysAfter1970 = CountDaysAfter1970(day, month, year);
 	}
 	else
 	{
 		throw std::out_of_range("Object cannot be created with this value.");
 	}
 }
-
 CDate::CDate(unsigned daysAfter1970)
 {
 	if (IsDataValid(daysAfter1970))
@@ -45,7 +38,7 @@ CDate::CDate(unsigned daysAfter1970)
 	}
 }
 
-unsigned CDate::GetDaysBeforeData(unsigned day, Month const& month, unsigned year) const
+unsigned CDate::CountDaysAfter1970(unsigned day, Month const& month, unsigned year) const noexcept
 {
 	if (month <= Month::FEBRUARY) year--;
 
@@ -63,15 +56,15 @@ unsigned CDate::GetDaysBeforeData(unsigned day, Month const& month, unsigned yea
 	return currentEra * DAYS_IN_ERA + dayOfEra - DAYS_BETWEEN_FIRST_ERA_AND_1970;
 }
 
-unsigned CDate::GetCurrentEra() const
+unsigned CDate::GetCurrentEra() const noexcept
 {
 	return (m_daysAfter1970 + DAYS_BETWEEN_FIRST_ERA_AND_1970) / DAYS_IN_ERA;
 }
-unsigned CDate::GetDayOfEra() const
+unsigned CDate::GetDayOfEra() const noexcept
 {
 	return (m_daysAfter1970 + DAYS_BETWEEN_FIRST_ERA_AND_1970) % DAYS_IN_ERA;
 }
-unsigned CDate::GetYearOfEra() const
+unsigned CDate::GetYearOfEra() const noexcept
 {
 	unsigned dayOfEra = GetDayOfEra();
 	return (dayOfEra 
@@ -79,7 +72,7 @@ unsigned CDate::GetYearOfEra() const
 		+ dayOfEra / DAYS_IN_100_YEARS_OF_EAR
 		- dayOfEra / (DAYS_IN_ERA - 1)) / DAYS_IN_BASE_YEAR;
 }
-unsigned CDate::GetDayOfYear() const
+unsigned CDate::GetDayOfYear() const noexcept
 {
 	unsigned dayOfEra = GetDayOfEra();
 	unsigned yearOfEra = GetYearOfEra();
@@ -90,7 +83,7 @@ unsigned CDate::GetDayOfYear() const
 	);
 }
 
-WeekDay CDate::GetWeekDay() const
+WeekDay CDate::GetWeekDay() const noexcept
 {
 	switch (m_daysAfter1970 % 7)
 	{
@@ -103,13 +96,13 @@ WeekDay CDate::GetWeekDay() const
 		default: return WeekDay::WEDNESDAY;
 	}
 }
-unsigned CDate::GetDay() const
+unsigned CDate::GetDay() const noexcept
 {
 	unsigned dayOfYear = GetDayOfYear();
 	unsigned shiftedMonthPosition = GetMonthPositionByDayOfYear(dayOfYear);
 	return dayOfYear - GetDaysOfYearByMonthPosition(shiftedMonthPosition) + 1;
 }
-Month CDate::GetMonth() const
+Month CDate::GetMonth() const noexcept
 {
 	unsigned shiftedMonthPosition = GetMonthPositionByDayOfYear(GetDayOfYear());
 	return ToMonth((shiftedMonthPosition < 10) 
@@ -117,7 +110,7 @@ Month CDate::GetMonth() const
 		: shiftedMonthPosition - 9
 	);
 }
-unsigned CDate::GetYear() const
+unsigned CDate::GetYear() const noexcept
 {
 	unsigned year = GetYearOfEra() + (GetCurrentEra() * YEARS_IN_ERA);
 	return (GetMonth() <= Month::FEBRUARY) ? year += 1 : year;
@@ -165,7 +158,7 @@ CDate const CDate::operator--(int)
 	m_daysAfter1970--;
 	return temp;
 }
-CDate CDate::operator+(unsigned days) const
+CDate CDate::operator+(unsigned days)
 {
 	if (!IsDataValid(m_daysAfter1970 + days))
 	{
@@ -174,7 +167,7 @@ CDate CDate::operator+(unsigned days) const
 
 	return CDate(m_daysAfter1970 + days);
 }
-CDate CDate::operator-(unsigned days) const
+CDate CDate::operator-(unsigned days)
 {
 	if (!IsDataValid(m_daysAfter1970 - days))
 	{
@@ -208,29 +201,29 @@ CDate& CDate::operator-=(unsigned days)
 	return *this;
 }
 
-bool CDate::operator==(CDate const& other) const noexcept
+bool CDate::operator==(CDate const& date) const noexcept
 {
-	return m_daysAfter1970 == other.m_daysAfter1970;
+	return m_daysAfter1970 == date.m_daysAfter1970;
 }
-bool CDate::operator!=(CDate const& other) const noexcept
+bool CDate::operator!=(CDate const& date) const noexcept
 {
-	return m_daysAfter1970 != other.m_daysAfter1970;
+	return m_daysAfter1970 != date.m_daysAfter1970;
 }
-bool CDate::operator>(CDate const& other) const noexcept
+bool CDate::operator>(CDate const& date) const noexcept
 {
-	return m_daysAfter1970 > other.m_daysAfter1970;
+	return m_daysAfter1970 > date.m_daysAfter1970;
 }
-bool CDate::operator<(CDate const& other) const noexcept
+bool CDate::operator<(CDate const& date) const noexcept
 {
-	return m_daysAfter1970 < other.m_daysAfter1970;
+	return m_daysAfter1970 < date.m_daysAfter1970;
 }
-bool CDate::operator<=(CDate const& other) const noexcept
+bool CDate::operator<=(CDate const& date) const noexcept
 {
-	return m_daysAfter1970 <= other.m_daysAfter1970;
+	return m_daysAfter1970 <= date.m_daysAfter1970;
 }
-bool CDate::operator>=(CDate const& other) const noexcept
+bool CDate::operator>=(CDate const& date) const noexcept
 {
-	return m_daysAfter1970 >= other.m_daysAfter1970;
+	return m_daysAfter1970 >= date.m_daysAfter1970;
 }
 
 unsigned CDate::GetShiftedMonthPositionFrom(Month const& normalMonth) const noexcept
@@ -241,9 +234,9 @@ unsigned CDate::GetShiftedMonthPositionFrom(Month const& normalMonth) const noex
 	//        ----------------------------------------------------
 	return (ToInt(normalMonth) + 9) % 12;
 }
-unsigned CDate::GetDaysOfYearByMonthPosition(unsigned monthPosition) const noexcept
+unsigned CDate::GetDaysOfYearByMonthPosition(unsigned month) const noexcept
 {
-	return (306 * monthPosition + 4) / 10;
+	return (306 * month + 4) / 10;
 }
 unsigned CDate::GetMonthPositionByDayOfYear(unsigned dayOfYear) const noexcept
 {
@@ -253,7 +246,7 @@ unsigned CDate::GetMonthPositionByDayOfYear(unsigned dayOfYear) const noexcept
 bool CDate::IsDataValid(unsigned day, Month month, unsigned year) const noexcept
 {
 	return (year >= 1970 && year <= 9999)
-		&& (static_cast<int>(month) >= 1) && (static_cast<int>(month) <= 12)
+		&& (ToInt(month) >= 1) && (ToInt(month) <= 12)
 		&& (day >= 1 && day <= 31);
 }
 bool CDate::IsDataValid(unsigned daysAfter1970) const noexcept
@@ -261,14 +254,30 @@ bool CDate::IsDataValid(unsigned daysAfter1970) const noexcept
 	return (daysAfter1970 >= 0) && (daysAfter1970 <= MAX_DAYS_AFTER_1970);
 }
 
-std::istream& operator>>(std::istream& in, CDate& date)
+std::istream& operator>>(std::istream& inputStream, CDate& date)
 {
-	throw std::exception("");
-	// TODO: вставьте здесь оператор return
-}
+	unsigned day, month, year;
 
-std::ostream& operator<<(std::ostream& out, CDate date)
+	if ((inputStream >> day) 
+		&& (inputStream.get() == '.')
+		&& (inputStream >> month)
+		&& (inputStream.get() == '.')
+		&& (inputStream >> year))
+	{
+		date = CDate(day, ToMonth(month), year);
+	}
+	else
+	{
+		inputStream.setstate(std::ios_base::failbit);
+	}
+	return inputStream;
+}
+std::ostream& operator<<(std::ostream& outputStream, CDate date)
 {
-	out << date.GetDay() << "." << static_cast<int>(date.GetMonth()) << "." << date.GetYear();
-	return out;
+	outputStream << std::setfill('0')
+		<< std::setw(2) << date.GetDay() << "."
+		<< std::setw(2) << ToInt(date.GetMonth()) << "."
+		<< std::setw(4) << date.GetYear();
+
+	return outputStream;
 }

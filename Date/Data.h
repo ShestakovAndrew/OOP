@@ -29,10 +29,10 @@ public:
 	explicit CDate(unsigned daysAfter1970 = 0);
 	CDate(unsigned day, Month month, unsigned year);
 
-	unsigned GetDay() const;
-	Month GetMonth() const;
-	unsigned GetYear() const;
-	WeekDay GetWeekDay() const;
+	unsigned GetDay() const noexcept;
+	Month GetMonth() const noexcept;
+	unsigned GetYear() const noexcept;
+	WeekDay GetWeekDay() const noexcept;
 
 	CDate& operator--();
 	CDate& operator++();
@@ -43,8 +43,8 @@ public:
 	CDate& operator+=(unsigned days);
 	CDate& operator-=(unsigned days);
 
-	CDate operator+(unsigned days) const;
-	CDate operator-(unsigned days) const;
+	CDate operator+(unsigned days);
+	CDate operator-(unsigned days);
 
 	int operator-(CDate const& data) const noexcept;
 
@@ -61,12 +61,12 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, CDate date);
 
 private:
-	unsigned GetDaysBeforeData(unsigned day, Month const& month, unsigned year) const;
+	unsigned CountDaysAfter1970(unsigned day, Month const& month, unsigned year) const noexcept;
 
-	unsigned GetCurrentEra() const;
-	unsigned GetDayOfEra() const;
-	unsigned GetYearOfEra() const;
-	unsigned GetDayOfYear() const;
+	unsigned GetCurrentEra() const noexcept;
+	unsigned GetDayOfEra() const noexcept;
+	unsigned GetYearOfEra() const noexcept;
+	unsigned GetDayOfYear() const noexcept;
 
 	unsigned GetShiftedMonthPositionFrom(Month const& normalMonth) const noexcept;
 	unsigned GetDaysOfYearByMonthPosition(unsigned monthPosition) const noexcept;
