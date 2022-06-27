@@ -68,8 +68,11 @@ void CRectangle::Draw(ICanvas& canvas) const
 {
 	CPoint rightTop = { m_leftTop.x + GetWidth(), m_leftTop.y };
 	CPoint leftBottom = { m_leftTop.x, m_leftTop.y - GetHeight() };
-	CPoint rightBottom = GetRightBottom();
+	std::vector<CPoint> vertices = { m_leftTop, rightTop, GetRightBottom(), leftBottom };
 
-	std::vector<CPoint> vertices = { m_leftTop, rightTop, rightBottom, leftBottom };
-	canvas.DrawPolygon(vertices, m_outlineColor, m_fillColor);
+	canvas.DrawLine(vertices[0], vertices[1], m_outlineColor);
+	canvas.DrawLine(vertices[1], vertices[2], m_outlineColor);
+	canvas.DrawLine(vertices[2], vertices[3], m_outlineColor);
+	canvas.DrawLine(vertices[3], vertices[0], m_outlineColor);
+	canvas.FillPolygon(vertices, m_fillColor);
 }

@@ -23,7 +23,7 @@ public:
 	CShapesController(std::istream& input, std::ostream& output);
 	bool HandleCommand();
 
-	void GetLastShapeInfo() const;
+	void GetShapeInfo() const;
 	void PrintShapeWithMaxArea() const;
 	void PrintShapeWithMinPerimeter() const;
 

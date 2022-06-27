@@ -34,12 +34,9 @@ TEST_CASE("ToString() should be return correct line segment information.")
 TEST_CASE("Draw in LineSegment must DrawLine on Canvas")
 {
 	CMockCanvas canvas;
-
-	CPoint pointFrom = { 0, 0 };
-	CPoint pointTo = { 5, 12 };
-	CLineSegment line(pointFrom, pointTo, 0xff00ff);
+	CLineSegment line({ 0, 0 }, { 5, 12 }, 0xff00ff);
 
 	line.Draw(canvas);
 	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawLine };
-	CHECK(canvas.GetData() == reqData);
+	REQUIRE(canvas.GetData() == reqData);
 }

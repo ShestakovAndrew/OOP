@@ -36,12 +36,12 @@ TEST_CASE("ToString() should be return correct circle information.")
 TEST_CASE("Draw in Circle must DrawCircle on Canvas")
 {
 	CMockCanvas canvas;
-
-	CPoint center = { 5, 0 };
-	double radius = 10;
-	CCircle circle(center, radius, 0, 0xffffff);
+	CCircle circle({ 5, 0 }, 10, 0, 0xffffff);
 
 	circle.Draw(canvas);
-	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawCircle };
-	CHECK(canvas.GetData() == reqData);
+	std::vector<CMockCanvas::Method> reqData = { 
+		CMockCanvas::Method::DrawCircle,
+		CMockCanvas::Method::FillCircle
+	};
+	REQUIRE(canvas.GetData() == reqData);
 }

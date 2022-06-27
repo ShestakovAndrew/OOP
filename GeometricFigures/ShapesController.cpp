@@ -2,50 +2,26 @@
 
 namespace
 {
-	std::vector<std::string> ParseCommand(std::istream& command)
+	bool IsNumber(std::string const& str)
 	{
-		std::vector<std::string> result;
-		std::string param;
-
-		while (!command.eof() && !command.fail())
+		for (auto symbol : str)
 		{
-			command >> param;
-			result.push_back(param);
-		}
-		return result;
-	}
-
-	bool IsNumbers(
-		std::vector<std::string>::const_iterator begin,
-		std::vector<std::string>::const_iterator end
-	)
-	{
-		for (auto& number = begin; number != end; number++)
-		{
-			for (auto symbol : *number)
+			if (!std::isdigit(symbol) && symbol != '.')
 			{
-				if (!std::isdigit(symbol) && symbol != '.')
-				{
-					return false;
-				}
+				return false;
 			}
 		}
 		return true;
 	}
-
-	bool IsColors(
-		std::vector<std::string>::const_iterator begin,
-		std::vector<std::string>::const_iterator end
-	)
+	bool IsColor(std::string const& str)
 	{
-		for (auto color = begin; color != end; color++)
+		if (str.size() != 6) return false;
+
+		for (auto symbol : str)
 		{
-			for (auto symbol : *color)
+			if (!std::isdigit(symbol) && (symbol < 'a' || symbol > 'f') && (symbol < 'A' || symbol > 'F'))
 			{
-				if (!std::isdigit(symbol) && (symbol < 'a' || symbol > 'f') && (symbol < 'A' || symbol > 'F'))
-				{
-					return false;
-				}
+				return false;
 			}
 		}
 		return true;
@@ -55,7 +31,7 @@ namespace
 CShapesController::CShapesController(std::istream& input, std::ostream& output)
 	: m_input(input), m_output(output)
 	, m_actionMap(
-	{ 
+	{
 		{ "LineSegment", std::bind(&CShapesController::LineSegment, this, std::placeholders::_1) },
 		{ "Rectangle", std::bind(&CShapesController::Rectangle, this, std::placeholders::_1) },
 		{ "Triangle", std::bind(&CShapesController::Triangle, this, std::placeholders::_1) },
@@ -85,15 +61,18 @@ bool CShapesController::HandleCommand()
 
 void CShapesController::LineSegment(std::istream& command)
 {
-	std::vector<std::string> splitCommand = ParseCommand(command);
-	if (splitCommand.size() == 5
-		&& IsNumbers(splitCommand.begin() + 0, splitCommand.begin() + 4)
-		&& IsColors(splitCommand.begin() + 4, splitCommand.begin() + 5)
-	)
+	std::string startPointX, startPointY, endPointX, endPointY;
+	std::string outlineColorStr;
+
+	if (((command >> startPointX) && IsNumber(startPointX)) &&
+		((command >> startPointY) && IsNumber(startPointY)) &&
+		((command >> endPointX) && IsNumber(endPointX)) &&
+		((command >> endPointY) && IsNumber(endPointY)) &&
+		((command >> outlineColorStr) && IsColor(outlineColorStr)) && command.eof())
 	{
-		CPoint startPoint = { std::stod(splitCommand[0]), std::stod(splitCommand[1]) };
-		CPoint endPoint = { std::stod(splitCommand[2]), std::stod(splitCommand[3]) };
-		uint32_t outlineColor = std::stoul(splitCommand[4], 0, 16);
+		CPoint startPoint = { std::stod(startPointX), std::stod(startPointY) };
+		CPoint endPoint = { std::stod(endPointX), std::stod(endPointY) };
+		uint32_t outlineColor = std::stoul(outlineColorStr, 0, 16);
 
 		m_shapes.push_back(
 			std::make_shared<CLineSegment>(startPoint, endPoint, outlineColor)
@@ -108,17 +87,23 @@ void CShapesController::LineSegment(std::istream& command)
 
 void CShapesController::Triangle(std::istream& command)
 {
-	std::vector<std::string> splitCommand = ParseCommand(command);
-	if (splitCommand.size() == 8
-		&& IsNumbers(splitCommand.begin() + 0, splitCommand.begin() + 6)
-		&& IsColors(splitCommand.begin() + 6, splitCommand.begin() + 8)
-	)
+	std::string vertex1x, vertex1y, vertex2x, vertex2y, vertex3x, vertex3y;
+	std::string outlineColorStr, fillColorStr;
+
+	if (((command >> vertex1x) && IsNumber(vertex1x)) &&
+		((command >> vertex1y) && IsNumber(vertex1y)) &&
+		((command >> vertex2x) && IsNumber(vertex2x)) &&
+		((command >> vertex2y) && IsNumber(vertex2y)) &&
+		((command >> vertex3x) && IsNumber(vertex3x)) &&
+		((command >> vertex3y) && IsNumber(vertex3y)) &&
+		((command >> outlineColorStr) && IsColor(outlineColorStr)) &&
+		((command >> fillColorStr) && IsColor(fillColorStr)) && command.eof())
 	{
-		CPoint vertex1 = { std::stod(splitCommand[0]), std::stod(splitCommand[1]) };
-		CPoint vertex2 = { std::stod(splitCommand[2]), std::stod(splitCommand[3]) };
-		CPoint vertex3 = { std::stod(splitCommand[4]), std::stod(splitCommand[5]) };
-		uint32_t outlineColor = std::stoul(splitCommand[6], 0, 16);
-		uint32_t fillColor = std::stoul(splitCommand[7], 0, 16);
+		CPoint vertex1 = { std::stod(vertex1x), std::stod(vertex1y) };
+		CPoint vertex2 = { std::stod(vertex2x), std::stod(vertex2y) };
+		CPoint vertex3 = { std::stod(vertex3x), std::stod(vertex3y) };
+		uint32_t outlineColor = std::stoul(outlineColorStr, 0, 16);
+		uint32_t fillColor = std::stoul(fillColorStr, 0, 16);
 
 		m_shapes.push_back(
 			std::make_shared<CTriangle>(vertex1, vertex2, vertex3, outlineColor, fillColor)
@@ -133,17 +118,21 @@ void CShapesController::Triangle(std::istream& command)
 
 void CShapesController::Rectangle(std::istream& command)
 {
-	std::vector<std::string> splitCommand = ParseCommand(command);
-	if (splitCommand.size() == 6
-		&& IsNumbers(splitCommand.begin() + 0, splitCommand.begin() + 4)
-		&& IsColors(splitCommand.begin() + 4, splitCommand.begin() + 6)
-	)
+	std::string leftTopX, leftTopY, widthStr, heightStr;
+	std::string outlineColorStr, fillColorStr;
+
+	if (((command >> leftTopX) && IsNumber(leftTopX)) &&
+		((command >> leftTopY) && IsNumber(leftTopY)) &&
+		((command >> widthStr) && IsNumber(widthStr)) &&
+		((command >> heightStr) && IsNumber(heightStr)) &&
+		((command >> outlineColorStr) && IsColor(outlineColorStr)) &&
+		((command >> fillColorStr) && IsColor(fillColorStr)) && command.eof())
 	{
-		CPoint leftTop = { std::stod(splitCommand[0]), std::stod(splitCommand[1]) };
-		double width = std::stod(splitCommand[2]);
-		double height = std::stod(splitCommand[3]);
-		uint32_t outlineColor = std::stoul(splitCommand[4], 0, 16);
-		uint32_t fillColor = std::stoul(splitCommand[5], 0, 16);
+		CPoint leftTop = { std::stod(leftTopX), std::stod(leftTopY) };
+		double width = std::stod(widthStr);
+		double height = std::stod(heightStr);
+		uint32_t outlineColor = std::stoul(outlineColorStr, 0, 16);
+		uint32_t fillColor = std::stoul(fillColorStr, 0, 16);
 
 		m_shapes.push_back(
 			std::make_shared<CRectangle>(leftTop, width, height, outlineColor, fillColor)
@@ -158,16 +147,19 @@ void CShapesController::Rectangle(std::istream& command)
 
 void CShapesController::Circle(std::istream& command)
 {
-	std::vector<std::string> splitCommand = ParseCommand(command);
-	if (splitCommand.size() == 5
-		&& IsNumbers(splitCommand.begin() + 0, splitCommand.begin() + 3)
-		&& IsColors(splitCommand.begin() + 3, splitCommand.begin() + 5)
-		)
+	std::string centerX, centerY, radiusStr;
+	std::string outlineColorStr, fillColorStr;
+
+	if (((command >> centerX) && IsNumber(centerX)) &&
+		((command >> centerY) && IsNumber(centerY)) &&
+		((command >> radiusStr) && IsNumber(radiusStr)) &&
+		((command >> outlineColorStr) && IsColor(outlineColorStr)) &&
+		((command >> fillColorStr) && IsColor(fillColorStr)) && command.eof())
 	{
-		CPoint center = { std::stod(splitCommand[0]), std::stod(splitCommand[1]) };
-		double radius = std::stod(splitCommand[2]);
-		uint32_t outlineColor = std::stoul(splitCommand[3], 0, 16);
-		uint32_t fillColor = std::stoul(splitCommand[4], 0, 16);
+		CPoint center = { std::stod(centerX), std::stod(centerY) };
+		double radius = std::stod(radiusStr);
+		uint32_t outlineColor = std::stoul(outlineColorStr, 0, 16);
+		uint32_t fillColor = std::stoul(fillColorStr, 0, 16);
 
 		m_shapes.push_back(
 			std::make_shared<CCircle>(center, radius, outlineColor, fillColor)
@@ -206,7 +198,7 @@ void CShapesController::DrawShapes()
 	}
 }
 
-void CShapesController::GetLastShapeInfo() const
+void CShapesController::GetShapeInfo() const
 {
 	for (auto const& shape : m_shapes)
 	{

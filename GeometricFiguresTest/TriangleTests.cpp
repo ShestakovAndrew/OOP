@@ -38,13 +38,14 @@ TEST_CASE("ToString() must return triangle information")
 TEST_CASE("Draw in Triangle must DrawPolygon on Canvas")
 {
 	CMockCanvas canvas;
-
-	CPoint vertex1 = { 0, 0 };
-	CPoint vertex2 = { 5, 12 };
-	CPoint vertex3 = { 5, 0 };
-	CTriangle triangle(vertex1, vertex2, vertex3, 0, 0xffffff);
+	CTriangle triangle({ 0, 0 }, { 5, 12 }, { 5, 0 }, 0, 0xffffff);
 
 	triangle.Draw(canvas);
-	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawPolygon };
-	CHECK(canvas.GetData() == reqData);
+	std::vector<CMockCanvas::Method> reqData = { 
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::FillPolygon
+	};
+	REQUIRE(canvas.GetData() == reqData);
 }

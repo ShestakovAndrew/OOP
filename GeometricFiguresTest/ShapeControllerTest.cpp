@@ -7,7 +7,7 @@ void VerifyCommandHandling(std::string const& command, std::string const& expect
 	CShapesController controller(input, output);
 	input << command;
 	REQUIRE(controller.HandleCommand());
-	controller.GetLastShapeInfo();
+	controller.GetShapeInfo();
 	REQUIRE(expectedResult == output.str());
 }
 

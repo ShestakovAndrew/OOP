@@ -1,18 +1,21 @@
 #pragma once
 #include "ICanvas.h"
+#include "SFML/Graphics.hpp"
 
 class CCanvas : public ICanvas
 {
 public:
-	CCanvas(sf::RenderTarget& window);
-	void DrawLine(CPoint from, CPoint to, uint32_t lineColor) override;
-	void DrawPolygon(std::vector<CPoint> points, uint32_t outlineColor, uint32_t fillColor) override;
-	void DrawCircle(CPoint center, double radius, uint32_t lineColor, uint32_t fillColor) override;
+	CCanvas(sf::RenderTarget& renderTarget);
+	void DrawLine(CPoint const& from, CPoint const& to, uint32_t lineColor) override;
+	void FillPolygon(std::vector<CPoint>const& points, uint32_t fillColor) override;
+	void DrawCircle(CPoint const& center, double radius, uint32_t lineColor) override;
+	void FillCircle(CPoint const& center, double radius, uint32_t fillColor) override;
 
 private:
-	sf::Vector2f GetCoordOnCanvas(CPoint point);
+	sf::Vector2f GetCoordOnCanvas(CPoint const& point);
+	sf::CircleShape CreateCircleShape(CPoint const& center, double radius);
 
-	sf::RenderTarget& m_window;
+	sf::RenderTarget& m_renderTarget;
 	int m_width;
 	int m_height;
 };

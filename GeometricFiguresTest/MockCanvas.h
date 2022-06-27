@@ -1,5 +1,5 @@
 #pragma once
-#include "../GeometricFigures/ICanvas.h"
+#include "GeometricFigures/ICanvas.h"
 
 class CMockCanvas : public ICanvas
 {
@@ -7,13 +7,15 @@ public:
 	enum class Method
 	{
 		DrawLine,
-		DrawPolygon,
-		DrawCircle
+		FillPolygon,
+		DrawCircle,
+		FillCircle
 	};
 
-	void DrawLine(CPoint from, CPoint to, uint32_t lineColor) override;
-	void DrawPolygon(std::vector<CPoint> points, uint32_t outlineColor, uint32_t fillColor) override;
-	void DrawCircle(CPoint center, double radius, uint32_t lineColor, uint32_t fillColor) override;
+	void DrawLine(CPoint const& from, CPoint const& to, uint32_t lineColor) override;
+	void FillPolygon(std::vector<CPoint> const& points, uint32_t fillColor) override;
+	void DrawCircle(CPoint const& center, double radius, uint32_t lineColor) override;
+	void FillCircle(CPoint const& center, double radius, uint32_t fillColor) override;
 
 	std::vector<Method> GetData() const;
 

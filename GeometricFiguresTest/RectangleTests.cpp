@@ -39,13 +39,15 @@ TEST_CASE("ToString() should be return correct rectangle information.")
 TEST_CASE("Draw in Rectangle must DrawPolygon on Canvas")
 {
 	CMockCanvas canvas;
-
-	CPoint leftTop = { 5, 5.5 };
-	double width = 10;
-	double height = 5;
-	CRectangle rectangle(leftTop, width, height, 0, 0xffffff);
+	CRectangle rectangle({ 5, 5.5 }, 10, 5, 0, 0xffffff);
 
 	rectangle.Draw(canvas);
-	std::vector<CMockCanvas::Method> reqData = { CMockCanvas::Method::DrawPolygon };
-	CHECK(canvas.GetData() == reqData);
+	std::vector<CMockCanvas::Method> reqData = { 
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::DrawLine,
+		CMockCanvas::Method::FillPolygon
+	};
+	REQUIRE(canvas.GetData() == reqData);
 }
