@@ -259,6 +259,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CalculatorControllerTest", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GeometricFiguresTest", "GeometricFiguresTest\GeometricFiguresTest.vcxproj", "{7673CE08-4722-4D79-B56A-7CF1F83B5354}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Лабораторная работа 1", "Лабораторная работа 1", "{BF9BBA5A-4918-4ABE-9F16-58C2FE1C17F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Задание 1", "Задание 1", "{2DA77784-AA51-4678-85F8-1B09AAB11D2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1006,8 +1010,10 @@ Global
 		{7D0CF9C8-9CCF-44D6-9066-A668C42FA301} = {A61A6B18-32F9-408C-9BB0-9BCE3F774A00}
 		{B425FE8F-1332-436A-A336-76B27EAB8AFB} = {A61A6B18-32F9-408C-9BB0-9BCE3F774A00}
 		{7673CE08-4722-4D79-B56A-7CF1F83B5354} = {48DFC5F3-8633-477A-9544-F4473B4683D0}
+		{2DA77784-AA51-4678-85F8-1B09AAB11D2F} = {BF9BBA5A-4918-4ABE-9F16-58C2FE1C17F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1BBE098-3BF7-4928-B155-2C461DC4E43F}
+		RESX_NeutralResourcesLanguage = ru-RU
 	EndGlobalSection
 EndGlobal
