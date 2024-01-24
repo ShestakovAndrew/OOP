@@ -1,28 +1,26 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
-
 int main(int argc, char* argv[])
 {
 	if (argc != 3)
 	{
-		cout << "Invalid arguments count\n"
-			 << "Usage: copyfile.exe <input file> <output file>\n";
+		std::cout << "Invalid arguments count" << std::endl
+			 << "Usage: copyfile.exe <input file> <output file>" << std::endl;                              
 		return 1;
 	}
 
-	ifstream input(argv[1]);
+	std::ifstream input(argv[1]);
 	if (!input.is_open())
 	{
-		cout << "Failed to open " << argv[1] << " for reading\n";
+		std::cout << "Failed to open " << argv[1] << " for reading" << std::endl;              
 		return 1;
 	}
 
-	ofstream output(argv[2]);
+	std::ofstream output(argv[2]);
 	if (!output.is_open())
 	{
-		cout << "Failed to open " << argv[2] << " for writing\n";
+		std::cout << "Failed to open " << argv[2] << " for writing" << std::endl;
 		return 1;
 	}
 
@@ -31,14 +29,14 @@ int main(int argc, char* argv[])
 	{
 		if (!output.put(ch))
 		{
-			cout << "Failed to save data on disk\n";
+			std::cout << "Failed to save data on disk" << std::endl;
 			return 1;
 		}
 	}
 
 	if (!output.flush())
 	{
-		cout << "Failed to save data on disk\n";
+		std::cout << "Failed to save data on disk" << std::endl;
 		return 1;
 	}
 
