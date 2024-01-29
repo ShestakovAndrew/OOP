@@ -11,7 +11,7 @@ std::fstream GetStreamFile(std::string const& filePath, std::ios_base::openmode 
 	{
 		throw std::invalid_argument("Failed to open file.");
 	}
-	return file;
+	return std::move(file);
 }
 
 bool ReplaceStringsInFile(

@@ -17,7 +17,7 @@ std::ifstream GetStreamFromFile(std::string const& filePath)
 	{
 		throw std::invalid_argument("Failed to open file.");
 	}
-	return file;
+	return std::move(file);
 }
 
 bool FindStringInFile(
