@@ -1,0 +1,2 @@
+lineIndex: 1; foundPos: 15; line: «десь тоже был cat, то пришЄл ещЄ один cat и их стало два.
+lineIndex: 1; foundPos: 39; line: «десь тоже был cat, то пришЄл ещЄ один cat и их стало два.

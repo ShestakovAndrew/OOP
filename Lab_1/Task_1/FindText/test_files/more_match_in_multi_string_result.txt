@@ -1,0 +1,3 @@
+lineIndex: 1; foundPos: 23; line: На этой строке побывал cat,
+lineIndex: 2; foundPos: 11; line: Потом этот cat спрыгнул сюда.
+lineIndex: 4; foundPos: 19; line: но здесь очередной cat.
