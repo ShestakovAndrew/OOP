@@ -1,0 +1,2 @@
+Replace.exe <input file> <output file> <search string> <replace string>
+Invalid arguments count.
