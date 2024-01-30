@@ -261,6 +261,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindText", "Lab_1\Task_1\Fi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Replace", "Lab_1\Task_1\Replace\Replace.vcxproj", "{F5FBE25A-4911-47AD-BAA4-F951CA78F92D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Join", "Lab_1\Task_1\Join\Join.vcxproj", "{0DD67305-A437-42EC-84A6-7E315255BC53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -869,6 +871,14 @@ Global
 		{F5FBE25A-4911-47AD-BAA4-F951CA78F92D}.Release|x64.Build.0 = Release|x64
 		{F5FBE25A-4911-47AD-BAA4-F951CA78F92D}.Release|x86.ActiveCfg = Release|Win32
 		{F5FBE25A-4911-47AD-BAA4-F951CA78F92D}.Release|x86.Build.0 = Release|Win32
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Debug|x64.ActiveCfg = Debug|x64
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Debug|x64.Build.0 = Debug|x64
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Debug|x86.ActiveCfg = Debug|Win32
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Debug|x86.Build.0 = Debug|Win32
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Release|x64.ActiveCfg = Release|x64
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Release|x64.Build.0 = Release|x64
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Release|x86.ActiveCfg = Release|Win32
+		{0DD67305-A437-42EC-84A6-7E315255BC53}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1000,6 +1010,7 @@ Global
 		{5856CA3B-4A9C-439C-B647-1CA4F73EC161} = {2DA77784-AA51-4678-85F8-1B09AAB11D2F}
 		{E2C09E29-F919-450C-8F39-CE73D9063AA3} = {2DA77784-AA51-4678-85F8-1B09AAB11D2F}
 		{F5FBE25A-4911-47AD-BAA4-F951CA78F92D} = {2DA77784-AA51-4678-85F8-1B09AAB11D2F}
+		{0DD67305-A437-42EC-84A6-7E315255BC53} = {2DA77784-AA51-4678-85F8-1B09AAB11D2F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		RESX_NeutralResourcesLanguage = ru-RU

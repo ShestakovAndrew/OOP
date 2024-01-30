@@ -1,0 +1,2 @@
+Usage: join.exe <input file1> ... <input file N> <output file>
+Invalid arguments count.
