@@ -66,8 +66,8 @@ int main(int argc, char* argv[])
 	try
 	{
 		CheckArguments(argc);
-		if (!ReplaceStringsInFile(argv[1] /*input file*/,argv[2] /*output file*/,
-								  argv[3] /*search string*/,	argv[4] /*replace string*/)
+		if (!ReplaceStringsInFile(argv[1] /*input file*/,    argv[2] /*output file*/,
+								  argv[3] /*search string*/, argv[4] /*replace string*/)
 		) 
 		{
 			std::cout << "No matches found to replace." << std::endl;
