@@ -14,48 +14,71 @@ std::fstream GetStreamFile(std::string const& filePath, std::ios_base::openmode 
 	return std::move(file);
 }
 
-bool ReplaceStringsInFile(
+std::string ReplaceString(
+	const std::string& subject, 
+	const std::string& searchString, 
+	const std::string& replacementString
+)
+{
+	std::string result;
+
+	size_t position = 0; 
+	size_t foundPosition = 0;
+
+	while (position < subject.length())
+	{
+		foundPosition = subject.find(searchString, position);
+
+		if (foundPosition == std::string::npos)
+		{
+			result.append(subject, position, std::string::npos);
+			break;
+		}
+		else
+		{
+			result.append(subject, position, foundPosition - position);
+			result += replacementString;
+			position = foundPosition + searchString.length();
+		}
+	}
+
+	return result;
+}
+
+void CopyFileWithReplacement(
 	std::string const& inputFile,
 	std::string const& outputFile,
-	std::string const& wordToReplace,
-	std::string const& wordReplace
-	)
+	std::string const& searchString, 
+	std::string const& replacementString
+)
 {
+	std::string line;
+
 	std::fstream inputFileStream = GetStreamFile(inputFile, std::ios::in);
 	std::fstream outputFileStream = GetStreamFile(outputFile, std::ios::out);
 
-	size_t wordToReplaceLength = wordToReplace.length();
-	size_t wordReplaceLength = wordReplace.length();
-
-	std::string line;
-	bool isReplaced = false;
-
-	for (size_t lineIndex = 1; std::getline(inputFileStream, line); lineIndex++)
+	while (std::getline(inputFileStream, line))
 	{
-		size_t position{};
-		while ((position = line.find(wordToReplace, position)) != std::string::npos)
-		{
-			isReplaced = true;
-			line.replace(position, wordToReplaceLength, wordReplace);
-			position += wordReplaceLength;
-		}
-		outputFileStream << line << std::endl;
+		outputFileStream << ReplaceString(line, searchString, replacementString) << std::endl;
 	}
 
+	outputFileStream.flush();
 	inputFileStream.close();
-	outputFileStream.close();
-
-	return isReplaced;
 }
 
-void CheckArguments(int argc)
+void CheckArguments(int argc, char* argv[])
 {
 	if (argc != 5)
 	{
-		std::cout << "Replace.exe <input file> <output file> <search string> <replace string>"
-			<< std::endl;
+		throw std::invalid_argument(
+			"Invalid arguments count.\n"
+			"Usage: Replace.exe <input file> <output file> <search string> <replace string>"
+		);
+	}
 
-		throw std::invalid_argument("Invalid arguments count.");
+	if (std::string(argv[1]) == std::string(argv[2]))
+	{
+		throw std::invalid_argument("Files identical.");
 	}
 }
 
@@ -65,23 +88,20 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		CheckArguments(argc);
-		if (!ReplaceStringsInFile(argv[1] /*input file*/,    argv[2] /*output file*/,
-								  argv[3] /*search string*/, argv[4] /*replace string*/)
-		) 
-		{
-			std::cout << "No matches found to replace." << std::endl;
-			return 1;
-		}
-		else
-		{
-			std::cout << "Replace successfully." << std::endl;
-		}
+		CheckArguments(argc, argv);
 
+		CopyFileWithReplacement(
+			argv[1] /*input file*/,
+			argv[2] /*output file*/,
+			argv[3] /*search string*/,
+			argv[4] /*replace string*/
+		);
+
+		std::cout << "Replace successfully." << std::endl;
 	}
-	catch (const std::invalid_argument& e)
+	catch (const std::invalid_argument& err)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << err.what() << std::endl;
 		return 1;
 	}
 
