@@ -41,13 +41,19 @@ rem 6) ожидаем ненулевой код завершения программы если диапазон 30 из 20 возможн
 	fc.exe "%TEMP%\output.txt" test_files\extract_incorrect_range.txt
 	if ERRORLEVEL 1 goto err
 
-rem 7) ожидаем ненулевой код завершения программы если некоректное кол-во аргументов.
+rem 7) ожидаем ненулевой код завершения программы если старт позиции и диапазон корректны, но сумарно выходят за пределы файла.
+	%PROGRAM% test_files\input.txt "%TEMP%\result.txt" 10 15 > "%TEMP%\output.txt"
+	if NOT ERRORLEVEL 1 goto err
+	fc.exe "%TEMP%\output.txt" test_files\extract_incorrect_range.txt
+	if ERRORLEVEL 1 goto err
+
+rem 8) ожидаем ненулевой код завершения программы если некоректное кол-во аргументов.
 	%PROGRAM% test_files\input.txt 0 30 > "%TEMP%\output.txt"
 	if NOT ERRORLEVEL 1 goto err
 	fc.exe "%TEMP%\output.txt" test_files\extract_incorrect_argv.txt
 	if ERRORLEVEL 1 goto err
 
-rem 8) ожидаем ненулевой код завершения программы если входного файла не существует.
+rem 9) ожидаем ненулевой код завершения программы если входного файла не существует.
 	%PROGRAM% test_files\input_no_exist.txt "%TEMP%\result.txt" 0 30 > "%TEMP%\output.txt"
 	if NOT ERRORLEVEL 1 goto err
 	fc.exe "%TEMP%\output.txt" test_files\no_file.txt
