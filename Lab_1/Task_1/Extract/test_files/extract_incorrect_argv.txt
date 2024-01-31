@@ -1,0 +1,2 @@
+Invalid arguments count.
+Usage: Extract.exe <input file> <output file> <start position> <fragment size>
