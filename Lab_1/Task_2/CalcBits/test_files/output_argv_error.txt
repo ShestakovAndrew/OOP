@@ -1,0 +1,4 @@
+Usage: calcbits.exe <byte>
+	<byte> - [0,255]
+
+Invalid arguments count.
