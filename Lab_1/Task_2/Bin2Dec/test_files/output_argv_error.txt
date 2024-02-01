@@ -1,0 +1,4 @@
+Usage: bin2dec.exe <number in binary system>
+	<number in binary system>: 0-32 bits
+
+Invalid arguments count.
