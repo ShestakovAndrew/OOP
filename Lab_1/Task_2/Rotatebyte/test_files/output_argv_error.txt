@@ -1,0 +1,6 @@
+Usage: rotatebyte.exe <byte> <number of bits> <L / R>
+	<byte> - [0,255]
+	<number of bits> - [0,8]
+	<L / R> - L or R
+
+Invalid arguments count.

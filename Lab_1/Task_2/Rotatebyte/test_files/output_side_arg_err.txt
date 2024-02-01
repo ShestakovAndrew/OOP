@@ -1,0 +1,1 @@
+<L / R> should be only L or R letter.
