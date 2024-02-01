@@ -55,12 +55,6 @@ rem ожидаем нулевой код завершения программы если byte = 255.
 	fc.exe "%TEMP%\output.txt" test_files\output_8.txt
 	if ERRORLEVEL 1 goto err
 
-rem ожидаем ненулевой код завершения программы если byte = -1.
-	%PROGRAM% -1 > "%TEMP%\output.txt"
-	if NOT ERRORLEVEL 1 goto err
-	fc.exe "%TEMP%\output.txt" test_files\output_out_of_range.txt
-	if ERRORLEVEL 1 goto err
-
 rem ожидаем ненулевой код завершения программы если byte = 256.
 	%PROGRAM% 256 > "%TEMP%\output.txt"
 	if NOT ERRORLEVEL 1 goto err
@@ -71,6 +65,18 @@ rem ожидаем ненулевой код завершения программы если byte нет.
 	%PROGRAM% > "%TEMP%\output.txt"
 	if NOT ERRORLEVEL 1 goto err
 	fc.exe "%TEMP%\output.txt" test_files\output_argv_error.txt
+	if ERRORLEVEL 1 goto err
+
+rem ожидаем ненулевой код завершения программы если вместо byte передали не число.
+	%PROGRAM% string > "%TEMP%\output.txt"
+	if NOT ERRORLEVEL 1 goto err
+	fc.exe "%TEMP%\output.txt" test_files\output_byte_not_digit.txt
+	if ERRORLEVEL 1 goto err
+
+rem ожидаем ненулевой код завершения программы если byte = -1.
+	%PROGRAM% -1 > "%TEMP%\output.txt"
+	if NOT ERRORLEVEL 1 goto err
+	fc.exe "%TEMP%\output.txt" test_files\output_byte_not_digit.txt
 	if ERRORLEVEL 1 goto err
 
 echo Program testing succeeded
