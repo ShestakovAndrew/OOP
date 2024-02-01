@@ -4,7 +4,7 @@
 
 void CheckArguments(int argc)
 {
-	if (argc != 1)
+	if (argc != 2)
 	{
 		throw std::invalid_argument(
 			"Usage: calcbits.exe <byte>\n"
@@ -12,6 +12,16 @@ void CheckArguments(int argc)
 			"Invalid arguments count."
 		);
 	}
+}
+
+int CheckByteRange(std::string const& byteStr)
+{
+	int byte = std::stoi(byteStr);
+	if (byte < 0 || byte > 255)
+	{
+		throw std::out_of_range("Out of range.");
+	}
+	return byte;
 }
 
 int main(int argc, char* argv[])
@@ -22,10 +32,16 @@ int main(int argc, char* argv[])
 	{
 		CheckArguments(argc);
 
+		int byte = CheckByteRange(argv[1]);
+
+		std::cout << ((byte >> 7) & 1) + ((byte >> 6) & 1) +
+					 ((byte >> 5) & 1) + ((byte >> 4) & 1) +
+					 ((byte >> 3) & 1) + ((byte >> 2) & 1) +
+					 ((byte >> 1) & 1) + (byte & 1);
 	}
-	catch (std::invalid_argument const& e)
+	catch (std::logic_error const& err)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << err.what() << std::endl;
 		return 1;
 	}
 }
