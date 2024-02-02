@@ -1,0 +1,4 @@
+Usage: dec2bin.exe <number in decimal system>
+	<number in decimal system>: 0-4294967295
+
+Invalid arguments count.

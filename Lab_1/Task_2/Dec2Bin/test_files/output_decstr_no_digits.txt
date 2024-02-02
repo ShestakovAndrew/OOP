@@ -1,0 +1,1 @@
+<number in decimal system> should be contain only 0-9.
