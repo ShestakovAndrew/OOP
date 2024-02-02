@@ -20,7 +20,7 @@ void ValidateArgument(int argc)
 	}
 }
 
-uint32_t Bin2Dec(std::string binStr)
+uint32_t Bin2Dec(std::string const& binStr)
 {
 	size_t length = binStr.length();
 
