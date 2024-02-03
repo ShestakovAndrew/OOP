@@ -1,0 +1,4 @@
+Usage: flipbyte.exe <input byte>
+	<input byte>: 0-255
+
+Invalid arguments count.
