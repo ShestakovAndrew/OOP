@@ -29,8 +29,8 @@ bool isValueInRangeNotation(std::string const& value, const uint8_t sourceNotati
 {
 	bool isNegativeValue = (value[0] == '-');
 
-	return std::all_of(value.begin() + isNegativeValue, value.end(),
-		[sourceNotation](char ch)
+	return std::all_of(isNegativeValue ? (value.begin() + 1) : value.begin(), value.end(),
+		[&sourceNotation](char ch)
 		{
 			return CharToDigit(ch) < sourceNotation;
 		}
@@ -41,10 +41,6 @@ std::string ConvertingFromDecimalTo(int64_t numberDecimal, const uint8_t destina
 {
 	std::string result;
 
-	bool isNegative = (numberDecimal < 0);
-
-	if (isNegative) numberDecimal *= -1;
-
 	while (numberDecimal > 0)
 	{
 		result.push_back(DigitToChar(numberDecimal % destinationNotation));
@@ -53,26 +49,23 @@ std::string ConvertingFromDecimalTo(int64_t numberDecimal, const uint8_t destina
 
 	reverse(result.begin(), result.end());
 
-	return isNegative ? ("-" + result) : result;
+	return result;
 }
 
-int64_t ConvertingToDecimalFrom(std::string const& value, const uint8_t sourceNotation)
+size_t ConvertingToDecimalFrom(std::string const& value, const uint8_t sourceNotation)
 {
-	bool isNegative = (value[0] == '-');
-
-	size_t amountNumbers = value.size() - 1;
+	size_t result = 0;
 	size_t powerOfBase = 1;
-	size_t decimalNumber = 0;
 
-	for (size_t i = amountNumbers; i != std::string::npos; i--)
+	for (size_t index = value.length() - 1; index != std::string::npos; index--)
 	{
-		if (value[i] == '-') break;
+		if (value[index] == '-') break;
 
-		decimalNumber += CharToDigit(value[i]) * powerOfBase;
+		result += CharToDigit(value[index]) * powerOfBase;
 		powerOfBase *= sourceNotation;
 	}
 
-	return isNegative ? (-1 * decimalNumber) : decimalNumber;
+	return result;
 }
 
 std::string Radix(
@@ -83,8 +76,14 @@ std::string Radix(
 {
 	if ((sourceNotation == destinationNotation) || (value == "0")) return value;
 
-	size_t numberDecimal = ConvertingToDecimalFrom(value, sourceNotation);
-	return ConvertingFromDecimalTo(numberDecimal, destinationNotation);
+	size_t decimalNumber = ConvertingToDecimalFrom(value, sourceNotation);
+
+	bool isNegativeValue = (value[0] == '-');
+
+	return std::format("{}{}", 
+		isNegativeValue ? "-" : "", 
+		ConvertingFromDecimalTo(decimalNumber, destinationNotation)
+	);
 }
 
 uint8_t ValidateNotation(std::string const& notationStr, std::string const& nameNotation)
