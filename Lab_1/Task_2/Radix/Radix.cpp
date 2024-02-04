@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 
 		std::cout << Radix(sourceNotation, destinationNotation, argv[3] /*value*/) << std::endl;
 	}
-	catch (std::logic_error const& err)
+	catch (std::invalid_argument const& err)
 	{
 		std::cout << err.what() << std::endl;
 		return 1;
