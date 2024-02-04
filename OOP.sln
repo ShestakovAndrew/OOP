@@ -261,6 +261,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Flipbyte", "Lab_1\Task_2\Fl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Radix", "Lab_1\Task_2\Radix\Radix.vcxproj", "{67F395AB-75E9-4AFA-909F-2AC4ED61BF86}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MagicNumbers", "Lab_1\Task_2\MagicNumbers\MagicNumbers.vcxproj", "{3D1F7BAD-F711-41DF-847F-B83370D4EA85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -877,6 +879,14 @@ Global
 		{67F395AB-75E9-4AFA-909F-2AC4ED61BF86}.Release|x64.Build.0 = Release|x64
 		{67F395AB-75E9-4AFA-909F-2AC4ED61BF86}.Release|x86.ActiveCfg = Release|Win32
 		{67F395AB-75E9-4AFA-909F-2AC4ED61BF86}.Release|x86.Build.0 = Release|Win32
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Debug|x64.ActiveCfg = Debug|x64
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Debug|x64.Build.0 = Debug|x64
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Debug|x86.ActiveCfg = Debug|Win32
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Debug|x86.Build.0 = Debug|Win32
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Release|x64.ActiveCfg = Release|x64
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Release|x64.Build.0 = Release|x64
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Release|x86.ActiveCfg = Release|Win32
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1008,9 +1018,10 @@ Global
 		{EA4505A8-D968-4FF9-819B-5CB48BDBF3D3} = {902EABCD-4CBF-4947-AA76-9584C767ED5D}
 		{1A375048-87FB-499A-BCFF-258213F75347} = {902EABCD-4CBF-4947-AA76-9584C767ED5D}
 		{67F395AB-75E9-4AFA-909F-2AC4ED61BF86} = {902EABCD-4CBF-4947-AA76-9584C767ED5D}
+		{3D1F7BAD-F711-41DF-847F-B83370D4EA85} = {902EABCD-4CBF-4947-AA76-9584C767ED5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B1BBE098-3BF7-4928-B155-2C461DC4E43F}
 		RESX_NeutralResourcesLanguage = ru-RU
+		SolutionGuid = {B1BBE098-3BF7-4928-B155-2C461DC4E43F}
 	EndGlobalSection
 EndGlobal
