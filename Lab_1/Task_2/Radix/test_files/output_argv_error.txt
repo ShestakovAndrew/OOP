@@ -1,0 +1,6 @@
+Usage: radix.exe <source notation> <destination notation> <value>
+	<source notation> - current number system [2;36].
+	<destination notation> - required number system [2;36].
+	<value> - number to translate.
+
+Invalid arguments count.

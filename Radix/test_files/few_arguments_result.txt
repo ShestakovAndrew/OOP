@@ -1,5 +1,0 @@
-Usage: findtext.exe <source notation> <destination notation> <value>
-	<source notation> - current number system (2 - 35).
-	<destination notation> - required number system (2 - 35).
-	<value> - number to translate.
-Invalid arguments count.
