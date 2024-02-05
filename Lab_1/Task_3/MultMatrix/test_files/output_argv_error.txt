@@ -1,0 +1,5 @@
+Usage: multmatrix.exe <matrix file 1> <matrix file 2>
+	<matrix file 1> - first path to file, with matrix coefficients.
+	<matrix file 2> - second path to file, with matrix coefficients.
+
+Invalid arguments count.
