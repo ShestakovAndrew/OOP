@@ -1,3 +1,0 @@
-Usage: InvertMatrix.exe <matrix filePath>
-	<matrix filePath> - path to file, where matrix coefficients are stored.
-Invalid arguments count.

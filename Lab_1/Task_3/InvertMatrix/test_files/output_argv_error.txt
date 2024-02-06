@@ -1,0 +1,4 @@
+Usage: invertmatrix.exe <matrix file>
+	<matrix filePath> - path to file, with matrix coefficients.
+
+Invalid arguments count.
