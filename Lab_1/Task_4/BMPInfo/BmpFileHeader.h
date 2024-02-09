@@ -1,26 +1,35 @@
 #pragma once
-#include <cstdint>
-#include <array>
 
-static const uint8_t BMP_SIGNATURE_BE[] = { 0x42, 0x4D };
-static const uint8_t BMP_SIGNATURE_LE[] = { 0x4D, 0x42 };
+static const std::vector<uint16_t> AVAILABLE_BMP_SIGNATURE = { 0x424D, 0x4D42 };
 static const std::vector<uint16_t> AVAILABLE_IMAGE_BITS = { 1, 2, 4, 8, 16, 24, 32, 48, 64 };
 
-enum class BMPCompression : uint16_t
+enum class BMPCompression : uint32_t
 {
 	RGB = 0,
-	RLE_8 = 1,
-	RLE_4 = 2,
-	BIT_FIELDS = 3,
-	JPEG = 4,
-	PNG = 5,
-	ALPHA_BIT_FIELDS = 6
+	RLE_8,
+	RLE_4,
+	BIT_FIELDS,
+	JPEG,
+	PNG,
+	ALPHA_BIT_FIELDS
 };
 
 #pragma pack (push, 1)
+struct XYZColor
+{
+	int32_t red;
+	int32_t green;
+	int32_t blue;
+};
+struct XYZColorTriple
+{
+	XYZColor xyzRed;
+	XYZColor xyzGreen;
+	XYZColor xyzBlue;
+};
 struct BitmapFileHeader
 {
-	uint8_t type[sizeof(BMP_SIGNATURE_BE)];
+	uint16_t type;
 	uint32_t fileSize;
 	uint32_t reserved;
 	uint32_t offBits;
@@ -46,7 +55,7 @@ struct BitmapV4Header : BitmapInfoHeader
 	uint32_t blueMask;
 	uint32_t alphaMask;
 	uint32_t csType;
-	CIEXYZTRIPLE endpoints;
+	XYZColorTriple endpoints;
 	uint32_t gammaRed;
 	uint32_t gammaGreen;
 	uint32_t gammaBlue;

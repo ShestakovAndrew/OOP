@@ -1,14 +1,25 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
 #include <sstream>
 #include <format>
-#include <iomanip>
 #include <algorithm>
-#include <variant>
-#include <winsock.h>
+#include <unordered_map>
 
 #include "BmpFileHeader.h"
+
+namespace
+{
+	static const std::unordered_map<BMPCompression, std::string> COMPRESSION_TABLE =
+	{
+			{BMPCompression::RGB, "RGB"},
+			{BMPCompression::RLE_8, "RLE 8"},
+			{BMPCompression::RLE_4, "RLE 4"},
+			{BMPCompression::BIT_FIELDS, "#Bit Fields"},
+			{BMPCompression::JPEG, "JPEG"},
+			{BMPCompression::PNG, "PNG"},
+			{BMPCompression::ALPHA_BIT_FIELDS, "Alpha Bit Fields"},
+	};
+}
 
 void ValidateArgumentsCounts(int argc)
 {
@@ -22,82 +33,86 @@ void ValidateArgumentsCounts(int argc)
 	}
 }
 
-void PrintBMPInfo(BMPInfo const& bitmapHeader)
+void PrintBMPInfo(BMPInfo const& bmpInfo)
 {
-	std::cout << std::format("Screen Resolution: {}x{}", 
-		bitmapHeader.bmpInfoHeader.width, 
-		bitmapHeader.bmpInfoHeader.height) << std::endl;
+	auto& bmpIH = bmpInfo.bmpInfoHeader;
 
-	std::cout << std::format("Count bits per pixel: {}",
-		bitmapHeader.bmpInfoHeader.bitCount) << std::endl;
+	std::cout << std::format("Screen Resolution: {}x{}.", bmpIH.width, bmpIH.height) << std::endl;
+	std::cout << std::format("Image size (bytes): {}.", bmpIH.sizeImage) << std::endl;
+	std::cout << std::format("Bits per pixel: {}.", bmpIH.bitCount) << std::endl;
 
-	std::cout << std::format("Image size (bytes): {}",
-		bitmapHeader.bmpInfoHeader.sizeImage) << std::endl;
+	if (bmpIH.bitCount <= 8)
+	{
+		std::cout << std::format("This file uses {} colors.",
+			std::pow(2, bmpIH.bitCount)) << std::endl;
+	}
 
-	std::cout << std::format("Compression: {}",
-		bitmapHeader.bmpInfoHeader.compression) << std::endl;
+	std::cout << std::format("This BMP file uses {} compression method.", 
+		COMPRESSION_TABLE.at(bmpIH.compression)) << std::endl;
 }
 
-bool ParseBMPFile(std::ifstream& bmpFile, BMPInfo& bmpInfo)
+BMPInfo ParseBMPFile(std::ifstream& bmpFile)
 {
+	BMPInfo bmpInfo{};
+
 	if (!bmpFile.read(reinterpret_cast<char*>(&bmpInfo), sizeof(bmpInfo)))
 	{
-		return false; // Возникла ошибка при чтении начала BMP-файла
+		throw std::length_error("Error reading the beginning of the BMP file.");
 	}
 
 	auto& bmpFH = bmpInfo.bmpFileHeader;
 
-	if (std::memcmp(bmpFH.type, BMP_SIGNATURE_BE, sizeof(BMP_SIGNATURE_BE)) != 0 ||
-		std::memcmp(bmpFH.type, BMP_SIGNATURE_LE, sizeof(BMP_SIGNATURE_LE)) != 0)
+	if (std::find(AVAILABLE_BMP_SIGNATURE.begin(), AVAILABLE_BMP_SIGNATURE.end(),
+		bmpFH.type) == AVAILABLE_BMP_SIGNATURE.end()
+	)
 	{
-		return false; // Сигнатура в начале файла не соответствует спецификации BMP
+		throw std::length_error("Signature does not comply with the BMP specification.");
 	}
 
-	bmpFH.fileSize = ntohl(bmpFH.fileSize);
 	if (bmpFH.fileSize <= 0)
 	{
-		return false; //Размер файла не может быть отрицательным или пустым
+		throw std::length_error("File size cannot be negative or empty.");
 	}
 
-	bmpFH.reserved = ntohl(bmpFH.reserved);
 	if (bmpFH.reserved != 0)
 	{
-		return false; //Размер зарезервированной области должен равняться 0
+		throw std::length_error("The size of the reserved area must be zero.");
 	}
 
 	auto& bmpIH = bmpInfo.bmpInfoHeader;
 
-	bmpIH.sizeInfoHeader = ntohl(bmpIH.sizeInfoHeader);
 	if (bmpIH.sizeInfoHeader != sizeof(BitmapV5Header) &&
 		bmpIH.sizeInfoHeader != sizeof(BitmapV4Header) &&
 		bmpIH.sizeInfoHeader != sizeof(BitmapInfoHeader)
 	)
 	{
-		return false; // Заголовок не удовлетворяет размерам ни одной из версии
+		throw std::length_error("The header does not fit the size of any version.");
 	}
 
-	bmpIH.width = ntohl(bmpIH.width);
-	bmpIH.height = ntohl(bmpIH.height);
 	if (bmpIH.width == 0 || bmpIH.height == 0)
 	{
-		return false; // Ни ширина, ни высота BMP-изображения не могут быть равны нулю
+		throw std::length_error("Neither the width nor height of a BMP image can be zero.");
 	}
 
-	bmpIH.bitCount = ntohl(bmpIH.bitCount);
 	if (std::find(AVAILABLE_IMAGE_BITS.begin(), AVAILABLE_IMAGE_BITS.end(), 
 		bmpIH.bitCount) == AVAILABLE_IMAGE_BITS.end()
 	)
 	{
-		return false; // Некорректная битность изображения
+		throw std::length_error("Incorrect image bit count.");
 	}
 
-	bmpIH.sizeImage = ntohl(bmpIH.sizeImage);
 	if (bmpIH.sizeImage <= 0)
 	{
-		return false; //Изображение не может быть отрицательным или пустым
+		throw std::length_error("Image size cannot be negative or empty.");
 	}
 
-	return true;
+	if (bmpIH.compression < BMPCompression::RGB || 
+		bmpIH.compression > BMPCompression::ALPHA_BIT_FIELDS)
+	{
+		throw std::length_error("Incorrect image compression.");
+	}
+
+	return bmpInfo;
 }
 
 std::ifstream GetFileStream(std::string const& filePath)
@@ -120,13 +135,8 @@ int main(int argc, char* argv[])
 
 		std::ifstream bmpFileStream = GetFileStream(argv[1]);
 
-		BMPInfo bitmapInfo;
-		if (ParseBMPFile(bmpFileStream, bitmapInfo)) PrintBMPInfo(bitmapInfo);
-		else
-		{
-			std::cout << "File is not a BMP format file." << std::endl;
-			return 1;
-		}
+		BMPInfo bitmapInfo = ParseBMPFile(bmpFileStream);
+		PrintBMPInfo(bitmapInfo);
 	}
 	catch (std::logic_error const& err)
 	{

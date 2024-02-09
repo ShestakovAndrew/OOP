@@ -1,1 +1,1 @@
-BMP file empty.
+Error reading the beginning of the BMP file.
