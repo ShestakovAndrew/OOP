@@ -1,0 +1,5 @@
+Screen Resolution: 640x426.
+Image size (bytes): 152778.
+Bits per pixel: 8.
+This file uses 256 colors.
+This BMP file uses RLE 8 compression method.

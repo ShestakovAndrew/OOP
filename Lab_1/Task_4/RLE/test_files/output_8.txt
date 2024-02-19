@@ -1,0 +1,5 @@
+Screen Resolution: 154x128.
+Image size (bytes): 19968.
+Bits per pixel: 8.
+This file uses 256 colors.
+This BMP file uses RGB compression method.

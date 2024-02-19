@@ -1,0 +1,1 @@
+Error reading the beginning of the BMP file.

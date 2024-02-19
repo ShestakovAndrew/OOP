@@ -1,0 +1,4 @@
+Usage: bmpinfo.exe <input file name>
+	<input file name> - path to bmp file.
+
+Invalid arguments count.
