@@ -1,1 +1,0 @@
-The size of the reserved area must be zero.

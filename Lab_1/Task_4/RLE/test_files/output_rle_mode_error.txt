@@ -1,0 +1,1 @@
+RLE Mode should be only pack/unpack.

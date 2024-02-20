@@ -1,4 +1,6 @@
-Usage: bmpinfo.exe <input file name>
-	<input file name> - path to bmp file.
+Usage: rle.exe pack <input file> <output file>
+Usage: rle.exe unpack <input file> <output file>
+	<input file> - path to input file.
+	<output file> - path to output file.
 
 Invalid arguments count.
