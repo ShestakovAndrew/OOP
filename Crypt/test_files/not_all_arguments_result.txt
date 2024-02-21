@@ -1,6 +1,0 @@
-Usage: crypt.exe <encrept/decrypt> <input file> <output file> <key>
-	<encrypt/decrypt> - mode to crypt symbols in text.
-	<input file> - path to input file.
-	<output file> - path to output file.
-	<key> - integer number in range 0-255.
-Invalid arguments count.
