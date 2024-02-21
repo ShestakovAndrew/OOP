@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 			std::cout << "The RLE algorithm was successfully applied to the file for decompression.";
 		}
 	}
-	catch (std::logic_error const& err)
+	catch (std::exception const& err)
 	{
 		std::cout << err.what() << std::endl;
 		return 1;
