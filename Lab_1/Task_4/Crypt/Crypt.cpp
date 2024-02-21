@@ -3,6 +3,7 @@
 #include <fstream>
 #include <functional>
 #include <unordered_map>
+#include <format>
 #include <windows.h>
 
 namespace
@@ -15,93 +16,78 @@ namespace
 		DECRYPT
 	};
 
-	static std::unordered_map<std::string, CryptionMethod> const table = { 
+	static std::unordered_map<std::string, CryptionMethod> const cryptionMethodTable = {
 			{"encrypt", CryptionMethod::ENCRYPT}, 
 			{"decrypt", CryptionMethod::DECRYPT} 
 	};
-
-	struct CryptData
-	{
-		uint8_t key = 0;
-		std::ifstream inputFile;
-		std::ofstream outputFile;
-		CryptionMethod method = CryptionMethod::ENCRYPT;
-	};
 }
 
-bool IsCryptionMethod(std::string const& str)
-{
-	return (table.find(str) != table.end()) ? true : false;
-}
-
-void ArgumentsCountCheck(int argc)
+void ValidateArgumentsCount(int argc)
 {
 	if (argc != 5)
 	{
-		std::cout << "Usage: crypt.exe <encrept/decrypt> <input file> <output file> <key>" << std::endl
-			<< "\t<encrypt/decrypt> - mode to crypt symbols in text." << std::endl
-			<< "\t<input file> - path to input file." << std::endl
-			<< "\t<output file> - path to output file." << std::endl
-			<< "\t<key> - integer number in range 0-255." << std::endl;
-
-		throw std::invalid_argument("Invalid arguments count.");
+		throw std::invalid_argument(
+			"Usage: crypt.exe <encrept/decrypt> <input file> <output file> <key>\n"
+			"\t<encrypt/decrypt> - mode to crypt symbols in text.\n"
+			"\t<input file> - path to input file.\n"
+			"\t<output file> - path to output file.\n"
+			"\t<key> - integer number in range 0-255.\n\n"
+			"Invalid arguments count."
+		);
 	}
 }
 
-std::ifstream GetOpenFileForRead(std::string const& filePath)
+CryptionMethod GetCryptionMethod(std::string const& str)
+{
+	if (cryptionMethodTable.find(str) == cryptionMethodTable.end())
+	{
+		throw std::invalid_argument("Encryption/decryption instruction failed set.");
+	}
+	return cryptionMethodTable.find(str)->second;
+}
+
+uint8_t GetKey(std::string const& str)
+{
+	uint8_t key = std::stoi(str);
+	if (key < 0 || key > 255)
+	{
+		throw std::invalid_argument("Key out of range. Key must be 0 - 255.");
+	}
+	return key;
+}
+
+std::ifstream GetFileStreamForRead(std::string const& filePath)
 {
 	std::ifstream file(filePath, std::ios::binary);
 	if (!file.is_open())
 	{
-		throw std::invalid_argument("Failed to open file for read.");
+		throw std::invalid_argument(
+			std::format("Failed to open `{}` file for read..", filePath)
+		);
 	}
-
-	return move(file);
+	return std::move(file);
 }
 
-std::ofstream GetOpenFileForWrite(std::string const& filePath)
+std::ofstream GetFileStreamForWrite(std::string const& filePath)
 {
 	std::ofstream file(filePath, std::ios::binary);
 	if (!file.is_open())
 	{
-		throw std::invalid_argument("Failed to open file for write.");
+		throw std::invalid_argument(
+			std::format("Failed to open `{}` file for write.", filePath)
+		);
 	}
-
-	return move(file);
-}
-
-CryptData ValidateArguments(int argc, const char* argv[])
-{
-	ArgumentsCountCheck(argc);
-
-	if (!IsCryptionMethod(argv[1]))
-	{
-		throw std::invalid_argument("Encryption/decryption instruction failed set.");
-	}
-
-	if (std::stoi(argv[4]) < 0 or std::stoi(argv[4]) > 255)
-	{
-		throw std::invalid_argument("Key out of range. Key must be 0 - 255.");
-	}
-
-	CryptData cryptData;
-
-	cryptData.method = table.find(argv[1])->second;
-	cryptData.inputFile = GetOpenFileForRead(argv[2]);
-	cryptData.outputFile = GetOpenFileForWrite(argv[3]);
-	cryptData.key = std::stoi(argv[4]);
-
-	return cryptData;
+	return std::move(file);
 }
 
 void CryptText(
-	std::ifstream& inputFile,
-	std::ofstream& outputFile,
+	std::ifstream& inputFile, 
+	std::ofstream& outputFile, 
 	uint8_t key,
-	CryptFunction const& cryptSymbol)
+	CryptFunction const& cryptSymbol
+)
 {
 	char symbol;
-
 	while (inputFile.read(&symbol, 1))
 	{
 		outputFile.put(cryptSymbol(symbol, key));
@@ -136,23 +122,25 @@ char DecryptSymbol(char symbol, uint8_t key)
 
 int main(int argc, const char* argv[])
 {
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
-
 	try
 	{
-		CryptData cryptData = ValidateArguments(argc, argv);
+		ValidateArgumentsCount(argc);
 
-		if (cryptData.method == CryptionMethod::ENCRYPT)
+		CryptionMethod cryptionMethod = GetCryptionMethod(argv[1]);
+		std::ifstream inputFileStream = GetFileStreamForRead(argv[2]);
+		std::ofstream outputFileStream = GetFileStreamForWrite(argv[3]);
+		uint8_t key = GetKey(argv[4]);
+
+		if (cryptionMethod == CryptionMethod::ENCRYPT)
 		{
-			CryptText(cryptData.inputFile, cryptData.outputFile, cryptData.key, EncryptSymbol);
+			CryptText(inputFileStream, outputFileStream, key, EncryptSymbol);
 		}
 		else
 		{
-			CryptText(cryptData.inputFile, cryptData.outputFile, cryptData.key, DecryptSymbol);
+			CryptText(inputFileStream, outputFileStream, key, DecryptSymbol);
 		}
 	}
-	catch (const std::invalid_argument& error)
+	catch (std::invalid_argument const& error)
 	{
 		std::cout << error.what() << std::endl;
 		return 1;
