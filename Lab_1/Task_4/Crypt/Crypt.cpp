@@ -4,7 +4,7 @@
 #include <functional>
 #include <unordered_map>
 #include <format>
-#include <windows.h>
+#include <algorithm>
 
 namespace
 {
@@ -20,6 +20,11 @@ namespace
 			{"encrypt", CryptionMethod::ENCRYPT}, 
 			{"decrypt", CryptionMethod::DECRYPT} 
 	};
+}
+
+bool isSymbolDecimal(char ch)
+{
+	return std::isdigit(ch);
 }
 
 void ValidateArgumentsCount(int argc)
@@ -48,10 +53,15 @@ CryptionMethod GetCryptionMethod(std::string const& str)
 
 uint8_t GetKey(std::string const& str)
 {
-	uint8_t key = std::stoi(str);
-	if (key < 0 || key > 255)
+	if (!std::all_of(str.begin(), str.end(), isSymbolDecimal))
 	{
-		throw std::invalid_argument("Key out of range. Key must be 0 - 255.");
+		throw std::invalid_argument("Key should be integer (0 - 255).");
+	}
+
+	uint8_t key = std::stoi(str);
+	if (!std::all_of(str.begin(), str.end(), isSymbolDecimal) || key < 0 || key > 255)
+	{
+		throw std::out_of_range("Key out of range. Key must be 0 - 255.");
 	}
 	return key;
 }
