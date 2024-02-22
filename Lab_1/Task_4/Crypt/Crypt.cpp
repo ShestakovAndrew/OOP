@@ -55,15 +55,15 @@ uint8_t GetKey(std::string const& str)
 {
 	if (!std::all_of(str.begin(), str.end(), isSymbolDecimal))
 	{
-		throw std::invalid_argument("Key should be integer (0 - 255).");
+		throw std::invalid_argument("Key should be contain only numbers.");
 	}
 
-	uint8_t key = std::stoi(str);
-	if (!std::all_of(str.begin(), str.end(), isSymbolDecimal) || key < 0 || key > 255)
+	int64_t key = std::stoll(str);
+	if (key < 0 || key > 255)
 	{
-		throw std::out_of_range("Key out of range. Key must be 0 - 255.");
+		throw std::out_of_range("Key out of range. Key should be in range (0 - 255).");
 	}
-	return key;
+	return static_cast<uint8_t>(key);
 }
 
 std::ifstream GetFileStreamForRead(std::string const& filePath)
@@ -72,7 +72,7 @@ std::ifstream GetFileStreamForRead(std::string const& filePath)
 	if (!file.is_open())
 	{
 		throw std::invalid_argument(
-			std::format("Failed to open `{}` file for read..", filePath)
+			std::format("Failed to open `{}` file for read.", filePath)
 		);
 	}
 	return std::move(file);
@@ -144,13 +144,15 @@ int main(int argc, const char* argv[])
 		if (cryptionMethod == CryptionMethod::ENCRYPT)
 		{
 			CryptText(inputFileStream, outputFileStream, key, EncryptSymbol);
+			std::cout << "Text successfully encrypted." << std::endl;
 		}
 		else
 		{
 			CryptText(inputFileStream, outputFileStream, key, DecryptSymbol);
+			std::cout << "Text successfully decrypted." << std::endl;
 		}
 	}
-	catch (std::invalid_argument const& error)
+	catch (std::exception const& error)
 	{
 		std::cout << error.what() << std::endl;
 		return 1;
