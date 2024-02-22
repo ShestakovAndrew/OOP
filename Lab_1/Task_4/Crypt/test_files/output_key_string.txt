@@ -1,1 +1,1 @@
-Key should be integer (0 - 255).
+Key should be contain only numbers.
