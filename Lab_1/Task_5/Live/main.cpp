@@ -69,7 +69,6 @@ LiveState GetNextLiveState(LiveState const& lifeState)
 
 std::ostream& operator<<(std::ostream& os, LiveState const& lifeState)
 {
-	return os << person.getName() << " " << person.getAge();
 }
 
 int main(int argc, char* argv[])
