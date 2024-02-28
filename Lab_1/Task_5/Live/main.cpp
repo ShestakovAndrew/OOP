@@ -6,7 +6,8 @@
 
 namespace
 {
-	using Matrix = std::array<std::array<char, 256>, 256>;
+	const size_t MAX_LIVESTATE_SIZE = 256;
+	using LiveState = std::vector<std::vector<char>>;
 
 	enum class LiveCells
 	{
@@ -53,19 +54,40 @@ std::fstream GetFileStream(std::string const& filePath, std::ios::openmode mode)
 	return std::move(file);
 }
 
+LiveState GetLiveStateFromFile(std::fstream const& file)
+{
+
+}
+
+LiveState GetNextLiveState(LiveState const& lifeState)
+{
+	LiveState nextLifeState(lifeState);
+
+
+	return nextLifeState;
+}
+
+std::ostream& operator<<(std::ostream& os, LiveState const& lifeState)
+{
+	return os << person.getName() << " " << person.getAge();
+}
+
 int main(int argc, char* argv[])
 {
 	try
 	{
 		ValidateArgumentsCount(argc);
 		std::fstream inputFileStream = GetFileStream(argv[1], std::ios::in);
-
+		
 		std::fstream outputFileStream;
 		if (argc == 3)
 		{
 			outputFileStream = GetFileStream(argv[2], std::ios::out);
 		}
 		std::ostream& outputStream = ((argc == 3) ? outputFileStream : std::cout);
+
+		LiveState liveState = GetLiveStateFromFile(inputFileStream);
+		outputStream << GetNextLiveState(liveState);
 	}
 	catch (std::exception const& error)
 	{
