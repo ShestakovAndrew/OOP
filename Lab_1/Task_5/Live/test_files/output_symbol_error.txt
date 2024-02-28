@@ -1,0 +1,1 @@
+Start life state has error symbol.

@@ -1,0 +1,8 @@
+*********
+*       *
+*       *
+*  ##   *
+*  ##   *
+*       *
+*********
+Generate next live state was successfully.

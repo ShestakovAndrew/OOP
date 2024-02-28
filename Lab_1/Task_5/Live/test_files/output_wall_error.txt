@@ -1,0 +1,1 @@
+Start life state should be with all wall around.

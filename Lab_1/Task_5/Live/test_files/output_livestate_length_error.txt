@@ -1,0 +1,1 @@
+Input live state should`t be zero.
