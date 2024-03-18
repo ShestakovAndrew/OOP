@@ -4,7 +4,15 @@
 #include <sstream>
 #include <algorithm>
 
-int Validat
+int ValidateArgument(int argc, char* argv[])
+{
+	if (argc != 2)
+	{
+		throw std::invalid_argument(
+			"Usage: calcbits.exe <byte>\n"
+			"\t<byte> - [0,255]\n\n"
+			"Invalid arguments count."
+		);
 	}
 
 	std::string byteStr(argv[1]);
