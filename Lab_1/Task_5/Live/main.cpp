@@ -8,8 +8,6 @@
 namespace
 {
 	const size_t MAX_LIVESTATE_SIZE = 256;
-	using LiveVector = std::vector<LiveCells>;
-	using LiveState = std::vector<LiveVector>;
 
 	enum class LiveCells
 	{
@@ -17,6 +15,12 @@ namespace
 		WALL,
 		LIVE
 	};
+
+	using LiveVector = std::vector<LiveCells>;
+	using LiveMatrix = std::vector<LiveVector>;
+
+	using NeighborCoordsVector = std::vector<std::pair<size_t, size_t>>;
+	using NeighborCoordsMatrix = std::vector<std::vector<std::pair<size_t, size_t>>>;
 
 	static std::unordered_map<char, LiveCells> const LIVE_CELLS_TABLE = {
 		{'*', LiveCells::WALL},
@@ -68,9 +72,9 @@ std::ofstream GetOutputFileStream(std::string const& filePath, std::ios::openmod
 	return std::move(file);
 }
 
-LiveState GetLiveStateFromFile(std::ifstream& inputFileStream)
+LiveMatrix GetLiveStateFromFile(std::ifstream& inputFileStream)
 {
-	LiveState liveState;
+	LiveMatrix liveState;
 	std::string fileLine;
 
 	while (std::getline(inputFileStream, fileLine))
@@ -86,17 +90,89 @@ LiveState GetLiveStateFromFile(std::ifstream& inputFileStream)
 	return liveState;
 }
 
-LiveState GetNextLiveState(LiveState const& lifeState)
+NeighborCoordsMatrix GetNeighborCells(LiveMatrix const& prevLifeState, size_t x, size_t y)
 {
-	LiveState nextLifeState(lifeState);
+	NeighborCoordsMatrix neighborCoordsMatrix;
 
+	for (size_t i = x - 1; i <= x + 1; i++) 
+	{
+		NeighborCoordsVector neighborCoordsVector;
+		for (size_t j = y - 1; j <= y + 1; j++)
+		{
+			if (i == x && j == y) continue;
+			neighborCoordsVector.push_back(std::make_pair(x, y));
+		}
+		neighborCoordsMatrix.push_back(neighborCoordsVector);
+	}
 
+	return neighborCoordsMatrix;
+}
+
+size_t CountLiveNeighbors(LiveMatrix const& prevLifeState, size_t x, size_t y)
+{
+	size_t result = 0;
+	NeighborCoordsMatrix neighborCoordsMatrix = GetNeighborCells(prevLifeState, x, y);
+	size_t newX, newY;
+
+	for (size_t i = 0; i < 8; i++) 
+	{
+		newX = neighborCoordsMatrix[i][0].first;
+		newY = neighborCoordsMatrix[i][0].second;
+
+		if (newX < 0 || newY < 0) continue;
+
+		if (newX >= prevLifeState.size() || newY >= prevLifeState.size()) continue;
+
+		if (prevLifeState[newX][newY] == LiveCells::LIVE) result++;
+	}
+
+	return result;
+}
+
+LiveMatrix GetNextLiveState(LiveMatrix const& prevLifeState)
+{
+	LiveMatrix nextLifeState(prevLifeState);
+
+	for (size_t x = 0; x < prevLifeState.size(); ++x)
+	{
+		for (size_t y = 0; y < prevLifeState[x].size(); ++y)
+		{
+			LiveCells currentCell = prevLifeState[x][y];
+			size_t countLiveCells = CountLiveNeighbors(prevLifeState, x, y);
+
+			if (currentCell == LiveCells::LIVE)
+			{
+				if (countLiveCells == 3)
+				{
+					nextLifeState[x][y] = LiveCells::LIVE;
+				}
+			}
+			else 
+			{
+				if ((currentCell != LiveCells::WALL) && 
+					(countLiveCells < 2) || (countLiveCells > 3))
+				{
+					nextLifeState[x][y] = LiveCells::DEAD;
+				}
+			}
+		}
+	}
 
 	return nextLifeState;
 }
 
-std::ostream& operator<<(std::ostream& os, LiveState const& lifeState)
+std::ostream& operator<<(std::ostream& os, LiveMatrix const& lifeState)
 {
+	for (size_t i = 0; i < lifeState.size(); ++i)
+	{
+		for (size_t j = 0; j < lifeState[i].size(); ++j)
+		{
+			os << INVERT_LIVE_CELLS_TABLE.find(lifeState[i][j])->second;
+		}
+		os << std::endl;
+	}
+
+	return os;
 }
 
 int main(int argc, char* argv[])
@@ -107,10 +183,10 @@ int main(int argc, char* argv[])
 		std::ifstream inputFileStream = GetInputFileStream(argv[1], std::ios::in);
 		
 		std::ostream& outputStream = (argc == 3) 
-			? static_cast<std::ostream&>(GetOutputFileStream(argv[2], std::ios::out)) 
+			? (std::ostream&)GetOutputFileStream(argv[2], std::ios::out) 
 			: std::cout;
 
-		LiveState liveState = GetLiveStateFromFile(inputFileStream);
+		LiveMatrix liveState = GetLiveStateFromFile(inputFileStream);
 		outputStream << GetNextLiveState(liveState);
 	}
 	catch (std::exception const& error)
