@@ -82,7 +82,12 @@ LiveMatrix GetLiveStateFromFile(std::ifstream& inputFileStream)
 		LiveVector liveLine;
 		for (char const& cell : fileLine)
 		{
-			liveLine.push_back(LIVE_CELLS_TABLE.find(cell)->second);
+			auto it = LIVE_CELLS_TABLE.find(cell);
+			if (it == LIVE_CELLS_TABLE.end())
+			{
+				throw std::logic_error("Start life state has error symbol.");
+			}
+			liveLine.push_back(it->second);
 		}
 		liveState.push_back(liveLine);
 	}
@@ -90,34 +95,32 @@ LiveMatrix GetLiveStateFromFile(std::ifstream& inputFileStream)
 	return liveState;
 }
 
-NeighborCoordsMatrix GetNeighborCells(LiveMatrix const& prevLifeState, size_t x, size_t y)
+NeighborCoordsVector GetNeighborCells(LiveMatrix const& prevLifeState, size_t x, size_t y)
 {
-	NeighborCoordsMatrix neighborCoordsMatrix;
+	NeighborCoordsVector neighborCoordsVector;
 
 	for (size_t i = x - 1; i <= x + 1; i++) 
 	{
-		NeighborCoordsVector neighborCoordsVector;
 		for (size_t j = y - 1; j <= y + 1; j++)
 		{
 			if (i == x && j == y) continue;
-			neighborCoordsVector.push_back(std::make_pair(x, y));
+			neighborCoordsVector.push_back(std::make_pair(i, j));
 		}
-		neighborCoordsMatrix.push_back(neighborCoordsVector);
 	}
 
-	return neighborCoordsMatrix;
+	return neighborCoordsVector;
 }
 
 size_t CountLiveNeighbors(LiveMatrix const& prevLifeState, size_t x, size_t y)
 {
 	size_t result = 0;
-	NeighborCoordsMatrix neighborCoordsMatrix = GetNeighborCells(prevLifeState, x, y);
+	NeighborCoordsVector neighborCoordsMatrix = GetNeighborCells(prevLifeState, x, y);
 	size_t newX, newY;
 
 	for (size_t i = 0; i < 8; i++) 
 	{
-		newX = neighborCoordsMatrix[i][0].first;
-		newY = neighborCoordsMatrix[i][0].second;
+		newX = neighborCoordsMatrix[i].first;
+		newY = neighborCoordsMatrix[i].second;
 
 		if (newX < 0 || newY < 0) continue;
 
@@ -129,7 +132,7 @@ size_t CountLiveNeighbors(LiveMatrix const& prevLifeState, size_t x, size_t y)
 	return result;
 }
 
-LiveMatrix GetNextLiveState(LiveMatrix const& prevLifeState)
+LiveMatrix GenerateNextLiveState(LiveMatrix const& prevLifeState)
 {
 	LiveMatrix nextLifeState(prevLifeState);
 
@@ -138,21 +141,23 @@ LiveMatrix GetNextLiveState(LiveMatrix const& prevLifeState)
 		for (size_t y = 0; y < prevLifeState[x].size(); ++y)
 		{
 			LiveCells currentCell = prevLifeState[x][y];
+
+			if (currentCell == LiveCells::WALL) continue;
+
 			size_t countLiveCells = CountLiveNeighbors(prevLifeState, x, y);
 
 			if (currentCell == LiveCells::LIVE)
 			{
-				if (countLiveCells == 3)
-				{
-					nextLifeState[x][y] = LiveCells::LIVE;
-				}
+				nextLifeState[x][y] = ((countLiveCells == 2) || (countLiveCells == 3))
+					? LiveCells::LIVE
+					: LiveCells::DEAD;
+				continue;
 			}
 			else 
 			{
-				if ((currentCell != LiveCells::WALL) && 
-					(countLiveCells < 2) || (countLiveCells > 3))
+				if (countLiveCells == 3)
 				{
-					nextLifeState[x][y] = LiveCells::DEAD;
+					nextLifeState[x][y] = LiveCells::LIVE;
 				}
 			}
 		}
@@ -175,6 +180,64 @@ std::ostream& operator<<(std::ostream& os, LiveMatrix const& lifeState)
 	return os;
 }
 
+bool LiveStateHasFieldBoundaries(LiveMatrix const& liveState)
+{
+	for (size_t i = 0; i < liveState.size(); i++)
+	{
+		if (i == 0 || i == liveState.size() - 1)
+		{
+			for (size_t j = 0; j < liveState[i].size(); j++)
+			{
+				if (liveState[i][j] != LiveCells::WALL)
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+			if (liveState[i].front() != LiveCells::WALL 
+				|| liveState[i].back() != LiveCells::WALL)
+			{
+				return false;
+			}
+		}
+	}
+	
+	return true;
+}
+
+bool LiveStateHasCorrectSize(LiveMatrix const& liveState)
+{
+	if (liveState.size() == 0 || liveState.size() > 256)
+	{
+		return false;
+	}
+
+	for (size_t i = 0; i < liveState.size(); i++)
+	{
+		if (liveState[i].size() > 256)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void ValidateLiveState(LiveMatrix const& liveState)
+{
+	if (!LiveStateHasCorrectSize(liveState))
+	{
+		throw std::length_error("Start life state should be max 256x256.");
+	}
+
+	if (!LiveStateHasFieldBoundaries(liveState))
+	{
+		throw std::logic_error("Start life state should be with all wall around.");
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	try
@@ -187,7 +250,12 @@ int main(int argc, char* argv[])
 			: std::cout;
 
 		LiveMatrix liveState = GetLiveStateFromFile(inputFileStream);
-		outputStream << GetNextLiveState(liveState);
+
+		ValidateLiveState(liveState);
+
+		outputStream << GenerateNextLiveState(liveState);
+		
+		std::cout << "Generate next live state was successfully." << std::endl;
 	}
 	catch (std::exception const& error)
 	{
