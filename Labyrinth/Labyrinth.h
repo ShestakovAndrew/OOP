@@ -37,7 +37,7 @@ struct LabyrinthBorders
 	CellPosition bottom;
 };
 
-struct LabyrintInfo
+struct LabyrinthInfo
 {
 	//данные могут быть не согласованными, так как данные дублируются 
 	LabyrinthBorders labyrinthBorders;
@@ -127,7 +127,7 @@ Labyrinth GetLabyrinthFromArgv(int argc, char* argv[]);
 
 SearchSettings GetSearchSetting(int argc, char* argv[]);
 
-Labyrinth GetLabyrinthFromFile(std::string const& filePath, LabyrintInfo const& labyrinthInfo);
+Labyrinth GetLabyrinthFromFile(std::string const& filePath, LabyrinthInfo const& labyrinthInfo);
 
 CellPosition GetPositionOf(LabyrinthCells labyrinthCells, Labyrinth const& labyrinth);
 
@@ -135,7 +135,7 @@ std::vector<CellPosition> GetLabeledCellsAround(CellPosition currentCell, Labyri
 
 LabyrinthBorders GetBordersOfLabyrinthFromFile(std::string const& filePath);
 
-LabyrintInfo GetLabyrinthInfoFromFile(std::string const& filePath);
+LabyrinthInfo GetLabyrinthInfoFromFile(std::string const& filePath);
 
 Labyrinth GetLabyrinthWithShortestPath(Labyrinth const& labyrinthWithoutShortestPath, SearchSettings const& searchSettings);
 

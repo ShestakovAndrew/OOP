@@ -246,9 +246,9 @@ LabyrinthBorders GetBordersOfLabyrinthFromFile(std::string const& filePath)
 	return borders;
 }
 
-LabyrintInfo GetLabyrinthInfoFromFile(std::string const& filePath)
+LabyrinthInfo GetLabyrinthInfoFromFile(std::string const& filePath)
 {
-	LabyrintInfo labyrinthInfo{};
+	LabyrinthInfo labyrinthInfo{};
 
 	labyrinthInfo.labyrinthBorders = GetBordersOfLabyrinthFromFile(filePath);
 
@@ -300,7 +300,7 @@ Labyrinth GetLabyrinthFromArgv(int argc, char* argv[])
 {
 	ValidateArguments(argc, argv);
 
-	LabyrintInfo labyrinthInfo = GetLabyrinthInfoFromFile(argv[1]);
+	LabyrinthInfo labyrinthInfo = GetLabyrinthInfoFromFile(argv[1]);
 
 	if (labyrinthInfo.labyrinthSize.height == 1 and labyrinthInfo.labyrinthSize.width == 1)
 	{
@@ -322,7 +322,7 @@ SearchSettings GetSearchSetting(int argc, char* argv[])
 	return SearchSettings::VON_NEUMANN;
 }
 
-Labyrinth GetLabyrinthFromFile(std::string const& filePath, LabyrintInfo const& labyrinthInfo)
+Labyrinth GetLabyrinthFromFile(std::string const& filePath, LabyrinthInfo const& labyrinthInfo)
 {
 	Labyrinth labyrinth;
 	std::ifstream fileStream = GetInputFileStream(filePath);
