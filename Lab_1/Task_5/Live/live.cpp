@@ -29,14 +29,14 @@ bool LiveStateHasFieldBoundaries(LiveMatrix const& liveState)
 
 bool LiveStateHasCorrectSize(LiveMatrix const& liveState)
 {
-	if (liveState.size() == 0 || liveState.size() > 256)
+	if (liveState.size() == 0 || liveState.size() > MAX_LIVESTATE_SIZE)
 	{
 		return false;
 	}
 
 	for (size_t i = 0; i < liveState.size(); i++)
 	{
-		if (liveState[i].size() > 256)
+		if (liveState[i].size() > MAX_LIVESTATE_SIZE)
 		{
 			return false;
 		}

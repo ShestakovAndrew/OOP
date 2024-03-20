@@ -4,7 +4,7 @@
 #include <vector>
 #include <unordered_map>
 
-const size_t MAX_LIVESTATE_SIZE = 256;
+inline constexpr size_t MAX_LIVESTATE_SIZE = 256;
 
 enum class LiveCells
 {
