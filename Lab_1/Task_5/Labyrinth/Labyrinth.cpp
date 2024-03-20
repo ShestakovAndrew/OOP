@@ -104,27 +104,45 @@ void ValidateLabyrinth(LabyrinthMatrix const& labyrinthMatrix)
 
 LabyrinthMatrix GetLabyrinthFromStream(std::istream& inputStream)
 {
-	LabyrinthMatrix labyrinth;
+	LabyrinthInfo labyrinthInfo = GetLabyrinthInfoFromStream(inputStream);
+	LabyrinthMatrix labyrinthMatrix;
 	std::string labyrinthLine;
+	size_t fileRow = 0;
 
 	while (std::getline(inputStream, labyrinthLine))
 	{
-		LabyrinthVector labyrinthVector;
-
-		for (char const& labyrinthCell : labyrinthLine)
+		if (fileRow < labyrinthInfo.offset.top)
 		{
-			auto const& it = LABYRINTH_CELLS_TABLE.find(labyrinthCell);
-			if (it == LABYRINTH_CELLS_TABLE.end())
-			{
-				throw std::logic_error("Incorrect latter.");
-			}
-			labyrinthVector.push_back(ToInt(it->second));
+			fileRow++;
+			continue;
 		}
 
-		labyrinth.push_back(labyrinthVector);
+		if ((fileRow - labyrinthInfo.offset.top) == labyrinthInfo.size.height) break;
+
+		std::vector<int16_t> temp(labyrinthInfo.size.width, ToInt(LabyrinthCells::BLANK));
+		size_t fileColumn = 0;
+
+		for (char const& cell : labyrinthLine)
+		{
+			if (fileColumn < labyrinthInfo.offset.left)
+			{
+				fileColumn++;
+				continue;
+			}
+
+			if (fileColumn < temp.size())
+			{
+				temp[fileColumn - labyrinthInfo.offset.left] = ToInt(LABYRINTH_CELLS_TABLE.find(cell)->second);
+			}
+
+			fileColumn++;
+		}
+
+		labyrinthMatrix.push_back(temp);
+		fileRow++;
 	}
 
-	return labyrinth;
+	return labyrinthMatrix;
 }
 
 CellPosition GetPositionOf(LabyrinthCells labyrinthCells, LabyrinthMatrix const& labyrinth)
