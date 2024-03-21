@@ -1,7 +1,4 @@
 Usage: labyrinth.exe <input file> <output file> <setting for search>
 	<input file> - path to input file.
 	<output file> - path to output file.
-	(optional)<setting for search> - "mur" or "von-neuman". By default von-neuman search.
-		mur - orthogonal and diagonal search.
-		von-neuman - only orthogonal search.
 Invalid arguments count.

@@ -71,7 +71,7 @@ LabyrinthInfo GetLabyrinthInfoFromStream(std::istream& inputStream)
 	}
 
 	labyrinthInfo.offset.top = labyrinthInfo.border.top.x;
-	labyrinthInfo.offset.top = labyrinthInfo.border.left.y;
+	labyrinthInfo.offset.left = labyrinthInfo.border.left.y;
 
 	return labyrinthInfo;
 }

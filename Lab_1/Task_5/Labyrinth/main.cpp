@@ -53,7 +53,6 @@ int main(int argc, char* argv[])
 		ValidateLabyrinth(labyrinth);
 
 		outputFileStream << GetLabyrinthWithShortestPath(labyrinth);
-		outputFileStream.flush();
 
 		std::cout << "Path in labyrinth was successfully founded." << std::endl;
 	}
