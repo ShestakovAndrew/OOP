@@ -9,7 +9,7 @@
 
 #include "boost/algorithm/cxx11/one_of.hpp"
 
-namespace 
+namespace
 {
 	inline constexpr size_t MAX_LABYRINTH_SIZE = 100;
 
