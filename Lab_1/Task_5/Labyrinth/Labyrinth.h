@@ -1,4 +1,6 @@
 #pragma once
+#include <algorithm>
+#include <functional>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,99 +9,93 @@
 
 #include "boost/algorithm/cxx11/one_of.hpp"
 
-inline constexpr size_t MAX_LABYRINTH_SIZE = 100;
-
-using LabyrinthVector = std::vector<int16_t>;
-using LabyrinthMatrix = std::vector<LabyrinthVector>;
-
-enum class LabyrinthCells
+namespace 
 {
-	PATH = -4,
-	END,
-	BLANK,
-	WALL,
-	START
-};
+	inline constexpr size_t MAX_LABYRINTH_SIZE = 100;
 
-struct CellPosition
-{
-	int16_t x;
-	int16_t y;
-};
+	struct CellPosition
+	{
+		int32_t x;
+		int32_t y;
+	};
 
-static std::unordered_map<char, LabyrinthCells> const LABYRINTH_CELLS_TABLE = {
-		{' ', LabyrinthCells::BLANK},
-		{'#', LabyrinthCells::WALL},
-		{'A', LabyrinthCells::START},
-		{'B', LabyrinthCells::END},
-		{'.', LabyrinthCells::PATH},
-};
+	struct LabyrinthBorders
+	{
+		CellPosition top;
+		CellPosition left;
+		CellPosition right;
+		CellPosition bottom;
+	};
 
-static std::unordered_map<LabyrinthCells, char> const INVERT_LABYRINTH_CELLS_TABLE = {
-		{LabyrinthCells::BLANK, ' '},
-		{LabyrinthCells::WALL, '#'},
-		{LabyrinthCells::START, 'A'},
-		{LabyrinthCells::END, 'B'},
-		{LabyrinthCells::PATH, '.'},
-};
+	using LabyrinthLine = std::vector<int32_t>;
+	using Labyrinth = std::vector<LabyrinthLine>;
+	using LabeledCells = std::vector<CellPosition>;
 
-static std::vector<CellPosition> const CELLS_OFFSET = {
-	{0, 1},
-	{1, 0},
-	{0, -1},
-	{-1, 0}
-};
+	enum class LabyrinthCells
+	{
+		PATH = -4,
+		END,
+		BLANK,
+		WALL,
+		START
+	};
 
-struct LabyrinthOffset
-{
-	size_t top;
-	size_t left;
-};
+	static std::unordered_map<int32_t, LabyrinthCells> const LABYRINTH_CELLS_TABLE = {
+			{' ', LabyrinthCells::BLANK},
+			{'#', LabyrinthCells::WALL},
+			{'A', LabyrinthCells::START},
+			{'B', LabyrinthCells::END},
+			{'.', LabyrinthCells::PATH},
+	};
 
-struct LabyrinthSize
-{
-	int16_t height;
-	int16_t width;
-};
+	static std::unordered_map<LabyrinthCells, char> const INVERT_LABYRINTH_CELLS_TABLE = {
+			{LabyrinthCells::BLANK, ' '},
+			{LabyrinthCells::WALL, '#'},
+			{LabyrinthCells::START, 'A'},
+			{LabyrinthCells::END, 'B'},
+			{LabyrinthCells::PATH, '.'},
+	};
 
-struct LabyrinthBorders
-{
-	CellPosition top;
-	CellPosition left;
-	CellPosition right;
-	CellPosition bottom;
-};
+	static std::vector<CellPosition> const MUR_OFFSET = {
+		{0, 1},
+		{1, 0},
+		{0, -1},
+		{-1, 0}
+	};
+}
 
-struct LabyrinthInfo
-{
-	//данные могут быть не согласованными, так как данные дублируются 
-	LabyrinthBorders border;
-	LabyrinthOffset offset;
-	LabyrinthSize size;
-};
+bool IsPathInLabyrinthFound(Labyrinth& labyrinth);
 
-bool SpreadWaveInLabyrinth(LabyrinthMatrix& labyrinth);
+bool IsBlankCell(int32_t cell);
 
-void ValidateLabyrinth(LabyrinthMatrix const& labyrinthMatrix);
+bool IsGreaterZero(int32_t number);
 
-void SetShortestPathToLabyrinth(LabyrinthMatrix& labyrinth, CellPosition const& startWave, CellPosition const& endWave);
+void ValidateLabyrinth(Labyrinth const& labyrinth);
+
+void SetShortestPathToLabyrinth(Labyrinth& labyrinth, CellPosition const& endWave);
 
 void UpdateBorders(LabyrinthBorders& labyrinthBorders, CellPosition const& cellPosition);
 
-LabyrinthMatrix GetLabyrinthFromStream(std::istream& inputStream);
+void EraseOffsetsFromLabyrinth(Labyrinth& labyrinth);
 
-LabyrinthMatrix GetLabyrinthWithShortestPath(LabyrinthMatrix const& labyrinthMatrix);
+Labyrinth GetLabyrinthFromStream(std::istream& inputStream);
 
-CellPosition GetPositionOf(LabyrinthCells labyrinthCells, LabyrinthMatrix const& labyrinth);
+Labyrinth GetLabyrinthWithoutOffsetsFromStream(std::istream& inputStream);
 
-std::vector<CellPosition> GetLabeledCellsAround(LabyrinthMatrix& labyrinth, CellPosition currentCell, bool& labyrinthEndFound);
+Labyrinth GetLabyrinthWithShortestPath(Labyrinth const& labyrinth);
 
-LabyrinthCells ToLabyrinthCells(int16_t labyrinthCell);
+CellPosition GetPositionOf(LabyrinthCells labyrinthCells, Labyrinth const& labyrinth);
 
-int16_t ToInt(LabyrinthCells labyrinthCell);
+LabeledCells GetLabeledCellsAround(
+	Labyrinth& labyrinth, 
+	CellPosition currentCell, 
+	bool& isPathExist
+);
 
-LabyrinthBorders GetBordersOfLabyrinthFromStream(std::istream& inputStream);
+LabyrinthCells ToLabyrinthCells(int32_t labyrinthCell);
 
-LabyrinthInfo GetLabyrinthInfoFromStream(std::istream& inputStream);
+int32_t ToInt(LabyrinthCells labyrinthCell);
 
-std::ostream& operator<<(std::ostream& os, LabyrinthMatrix const& labyrinthMatrix);
+LabyrinthBorders GetLabyrinthBorders(Labyrinth const& labyrinth);
+
+std::ostream& operator<<(std::ostream& os, Labyrinth const& labyrinth);

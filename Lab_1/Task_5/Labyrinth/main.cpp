@@ -46,15 +46,12 @@ int main(int argc, char* argv[])
 		ValidateArgumentsCount(argc);
 
 		std::ifstream inputFileStream = GetInputFileStream(argv[1]);
-		std::ofstream outputFileStream = GetOutputFileStream(argv[2]);
-
-		LabyrinthMatrix labyrinth = GetLabyrinthFromStream(inputFileStream);
+		Labyrinth labyrinth = GetLabyrinthWithoutOffsetsFromStream(inputFileStream);
 
 		ValidateLabyrinth(labyrinth);
 
+		std::ofstream outputFileStream = GetOutputFileStream(argv[2]);
 		outputFileStream << GetLabyrinthWithShortestPath(labyrinth);
-
-		std::cout << "Path in labyrinth was successfully founded." << std::endl;
 	}
 	catch (std::exception const& error)
 	{
