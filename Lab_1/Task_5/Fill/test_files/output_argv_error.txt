@@ -1,0 +1,4 @@
+Usage: fill.exe <input file> <output file>
+	<input file> - path to input file.
+	<output file> - path to output file.
+Invalid arguments count.

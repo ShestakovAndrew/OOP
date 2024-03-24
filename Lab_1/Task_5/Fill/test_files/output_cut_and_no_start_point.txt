@@ -1,0 +1,2 @@
+Input file was cutted.
+No start point to fill outlines.
