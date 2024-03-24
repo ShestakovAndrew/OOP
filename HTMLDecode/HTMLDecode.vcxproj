@@ -144,9 +144,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="HTMLDecode.h" />
   </ItemGroup>
   <ItemGroup>
@@ -154,14 +151,17 @@
       <Project>{c2aec1a8-e630-4d01-b721-8e35652a27ca}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\boost.1.78.0\build\boost.targets" Condition="Exists('..\packages\boost.1.78.0\build\boost.targets')" />
+    <Import Project="..\packages\boost.1.84.0\build\boost.targets" Condition="Exists('..\packages\boost.1.84.0\build\boost.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\boost.1.78.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.78.0\build\boost.targets'))" />
+    <Error Condition="!Exists('..\packages\boost.1.84.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.84.0\build\boost.targets'))" />
   </Target>
 </Project>
