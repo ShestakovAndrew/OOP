@@ -31,7 +31,7 @@ void ValidateArgumentsCount(int argc)
 	if (argc != 3)
 	{
 		throw std::invalid_argument(
-			"Usage: labyrinth.exe <input file> <output file> <setting for search>\n"
+			"Usage: labyrinth.exe <input file> <output file>\n"
 			"\t<input file> - path to input file.\n"
 			"\t<output file> - path to output file.\n"
 			"Invalid arguments count."
